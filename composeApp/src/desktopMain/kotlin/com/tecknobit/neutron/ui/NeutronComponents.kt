@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
-import com.tecknobit.neutron.ui.screens.session.Home
 import com.tecknobit.neutron.ui.theme.errorContainerDark
 import com.tecknobit.neutroncore.records.revenues.*
 import kotlinx.coroutines.delay
@@ -67,7 +66,7 @@ fun DisplayRevenues(
             )
         ) {
             items(
-                items = Home.revenues,
+                items = revenues,
                 key = { it.id }
             ) { revenue ->
                 if(revenue is GeneralRevenue) {
@@ -110,9 +109,6 @@ fun GeneralRevenue(
     val isInitialRevenue = revenue.title == InitialRevenue.INITIAL_REVENUE_KEY
     Column {
         ListItem(
-            colors = ListItemDefaults.colors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
-            ),
             headlineContent = {
                 Text(
                     text = if(isInitialRevenue)
@@ -192,18 +188,19 @@ fun GeneralRevenue(
         AnimatedVisibility(
             visible = descriptionDisplayed
         ) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    ),
-                text = (revenue as GeneralRevenue).description,
-                textAlign = TextAlign.Justify
-            )
+            Surface {
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            bottom = 16.dp
+                        ),
+                    text = (revenue as GeneralRevenue).description,
+                    textAlign = TextAlign.Justify
+                )
+            }
         }
     }
     if(isInitialRevenue)
@@ -220,9 +217,6 @@ private fun ProjectRevenue(
             .clickable {
                 navToProject.invoke(revenue)
             },
-        colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        ),
         headlineContent = {
             Text(
                 text = revenue.title,

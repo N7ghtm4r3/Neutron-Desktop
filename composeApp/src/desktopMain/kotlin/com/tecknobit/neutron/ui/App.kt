@@ -26,9 +26,7 @@ fun App() {
     bodyFontFamily = FontFamily(Font(Res.font.anektelugu))
     displayFontFamily = FontFamily(Font(Res.font.lilitaone))
     PreComposeApp {
-        NeutronTheme (
-            darkTheme = true
-        ) {
+        NeutronTheme {
             navigator = rememberNavigator()
             NavHost(
                 navigator = navigator,

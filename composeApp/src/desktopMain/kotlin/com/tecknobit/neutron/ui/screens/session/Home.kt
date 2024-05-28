@@ -40,115 +40,116 @@ class Home: Screen() {
 
     }
 
-    @Composable
-    override fun ShowScreen() {
+    init {
         // TODO: LOAD CORRECTLY
-        if(revenues.isEmpty()) {
-            revenues.add(
-                ProjectRevenue(
-                    "gag",
-                    "Prova",
-                    System.currentTimeMillis(),
-                    InitialRevenue(
-                        "gaga",
-                        2000.0,
+        revenues.add(
+            ProjectRevenue(
+                "gag",
+                "Prova",
+                System.currentTimeMillis(),
+                InitialRevenue(
+                    "gaga",
+                    2000.0,
+                    System.currentTimeMillis()
+                ),
+                listOf(
+                    TicketRevenue(
+                        "g11aga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga",
+                        1715893715000L
+                    ),
+                    TicketRevenue(
+                        "g1aga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga",
                         System.currentTimeMillis()
                     ),
-                    listOf(
-                        TicketRevenue(
-                            "g11aga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga",
-                            1715893715000L
-                        ),
-                        TicketRevenue(
-                            "g1aga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga",
-                            System.currentTimeMillis()
-                        ),
-                        TicketRevenue(
-                            "gaga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga",
-                            System.currentTimeMillis()
-                        ),
-                        TicketRevenue(
-                            "25gaga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga",
-                            System.currentTimeMillis()
-                        ),
-                        TicketRevenue(
-                            "24gaga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga"
-                        ),
-                        TicketRevenue(
-                            "4gaga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga",
-                            System.currentTimeMillis()
-                        ),
-                        TicketRevenue(
-                            "3gaga",
-                            "Ciao",
-                            1000.0,
-                            System.currentTimeMillis(),
-                            "gaaga"
-                        )
+                    TicketRevenue(
+                        "gaga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga",
+                        System.currentTimeMillis()
+                    ),
+                    TicketRevenue(
+                        "25gaga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga",
+                        System.currentTimeMillis()
+                    ),
+                    TicketRevenue(
+                        "24gaga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga"
+                    ),
+                    TicketRevenue(
+                        "4gaga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga",
+                        System.currentTimeMillis()
+                    ),
+                    TicketRevenue(
+                        "3gaga",
+                        "Ciao",
+                        1000.0,
+                        System.currentTimeMillis(),
+                        "gaaga"
                     )
                 )
             )
-            revenues.add(
-                GeneralRevenue(
-                    "aaa",
-                    "General",
-                    100000.0,
-                    System.currentTimeMillis(),
-                    listOf(
-                        RevenueLabel(
-                            "ff",
-                            "Prog",
-                            "#33A396"
-                        ),
-                        RevenueLabel(
-                            "sff",
-                            "Proggag",
-                            "#8BAEA2"
-                        ),
-                        RevenueLabel(
-                            "sffa",
-                            "cfnafna",
-                            "#59EC21"
-                        )
+        )
+        revenues.add(
+            GeneralRevenue(
+                "aaa",
+                "General",
+                100000.0,
+                System.currentTimeMillis(),
+                listOf(
+                    RevenueLabel(
+                        "ff",
+                        "Prog",
+                        "#33A396"
                     ),
-                    "Lorem Ipsum è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione. È sopravvissuto non solo a più di cinque secoli, ma anche al passaggio alla videoimpaginazione, pervenendoci sostanzialmente inalterato. Fu reso popolare, negli anni ’60, con la diffusione dei fogli di caratteri trasferibili “Letraset”, che contenevano passaggi del Lorem Ipsum, e più recentemente da software di impaginazione come Aldus PageMaker, che includeva versioni del Lorem Ipsum."
-                )
+                    RevenueLabel(
+                        "sff",
+                        "Proggag",
+                        "#8BAEA2"
+                    ),
+                    RevenueLabel(
+                        "sffa",
+                        "cfnafna",
+                        "#59EC21"
+                    )
+                ),
+                "Lorem Ipsum è un testo segnaposto utilizzato nel settore della tipografia e della stampa. Lorem Ipsum è considerato il testo segnaposto standard sin dal sedicesimo secolo, quando un anonimo tipografo prese una cassetta di caratteri e li assemblò per preparare un testo campione. È sopravvissuto non solo a più di cinque secoli, ma anche al passaggio alla videoimpaginazione, pervenendoci sostanzialmente inalterato. Fu reso popolare, negli anni ’60, con la diffusione dei fogli di caratteri trasferibili “Letraset”, che contenevano passaggi del Lorem Ipsum, e più recentemente da software di impaginazione come Aldus PageMaker, che includeva versioni del Lorem Ipsum."
             )
-            revenues.add(
-                GeneralRevenue(
-                    "aaaa",
-                    "General",
-                    2000.0,
-                    System.currentTimeMillis(),
-                    emptyList(),
-                    "Prova\nagag\naagagaga\nanan\n"
-                )
+        )
+        revenues.add(
+            GeneralRevenue(
+                "aaaa",
+                "General",
+                2000.0,
+                System.currentTimeMillis(),
+                emptyList(),
+                "Prova\nagag\naagagaga\nanan\n"
             )
-        }
+        )
+    }
+
+    @Composable
+    override fun ShowScreen() {
         // TODO: USE THE REAL DATA
         val walletTrendPercent by remember { mutableDoubleStateOf(1.0) }
         Scaffold (
@@ -182,6 +183,9 @@ class Home: Screen() {
                     ),
                     elevation = CardDefaults.cardElevation(
                         defaultElevation = 15.dp
+                    ),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.background
                     )
                 ) {
                     Column (
