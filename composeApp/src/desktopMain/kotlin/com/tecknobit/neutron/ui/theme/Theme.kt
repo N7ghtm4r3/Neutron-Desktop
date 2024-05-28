@@ -256,7 +256,7 @@ fun NeutronTheme(
             else -> isSystemInDarkTheme()
         }
     } else*/
-        isSystemInDarkTheme(),
+        isSystemInDarkTheme(), // TODO: TO FIX THE NEGATION AND MAKE THE REAL WORKFLOW WITH THE USER
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

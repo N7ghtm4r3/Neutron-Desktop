@@ -18,6 +18,8 @@ kotlin {
             implementation("com.github.N7ghtm4r3:APIManager:2.2.3")
             implementation("com.tecknobit.neutroncore:Neutron-core:1.0.0")
             api("moe.tlaster:precompose:1.6.0")
+            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
+            implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-alpha06")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
