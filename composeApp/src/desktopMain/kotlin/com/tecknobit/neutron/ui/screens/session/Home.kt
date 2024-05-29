@@ -1,13 +1,15 @@
 package com.tecknobit.neutron.ui.screens.session
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import com.tecknobit.apimanager.trading.TradingTools.textualizeAssetPercent
 import com.tecknobit.neutron.ui.DisplayRevenues
 import com.tecknobit.neutron.ui.bodyFontFamily
 import com.tecknobit.neutron.ui.getWalletBalance
+import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.screens.Screen
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutroncore.records.revenues.*
@@ -166,95 +169,63 @@ class Home: Screen() {
                 }
             }
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primary)
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(
-                            top = 100.dp,
-                            start = 100.dp
-                        ),
-                    shape = RoundedCornerShape(
-                        topStart = 40.dp
-                    ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 15.dp
-                    ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.background
-                    )
-                ) {
+            DisplayContent(
+                header = {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.earnings)
+                        )
+                        Text(
+                            text = "${revenues.getWalletBalance()}${user.currency.symbol}",
+                            fontFamily = bodyFontFamily,
+                            fontSize = 45.sp
+                        )
+                        Text(
+                            text = "${textualizeAssetPercent(walletTrendPercent)}/"
+                                    + stringResource(Res.string.last_month)
+                        )
+                    }
                     Column (
                         modifier = Modifier
-                            .height(175.dp)
+                            .weight(1f),
+                        horizontalAlignment = Alignment.End
                     ) {
-                        Row (
+                        AsyncImage(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(
-                                    start = 35.dp,
-                                    end = 35.dp
-                                ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                            ) {
-                                Text(
-                                    text = stringResource(Res.string.earnings)
+                                .size(125.dp)
+                                .shadow(
+                                    elevation = 5.dp,
+                                    shape = CircleShape
                                 )
-                                Text(
-                                    text = "${revenues.getWalletBalance()}${user.currency.symbol}",
-                                    fontFamily = bodyFontFamily,
-                                    fontSize = 45.sp
-                                )
-                                Text(
-                                    text = "${textualizeAssetPercent(walletTrendPercent)}/"
-                                            + stringResource(Res.string.last_month)
-                                )
-                            }
-                            Column (
-                                modifier = Modifier
-                                    .weight(1f),
-                                horizontalAlignment = Alignment.End
-                            ) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .size(125.dp)
-                                        .shadow(
-                                            elevation = 5.dp,
-                                            shape = CircleShape
-                                        )
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            // TODO: NAV TO PROFILE
-                                        },
-                                    contentScale = ContentScale.Crop,
-                                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                                        .data(user.profilePic)
-                                        .crossfade(true)
-                                        .crossfade(500)
-                                        .build(),
-                                    //TODO: USE THE REAL IMAGE ERROR .error(),
-                                    contentDescription = null
-                                )
-                            }
-                        }
+                                .clip(CircleShape)
+                                .clickable {
+                                    // TODO: NAV TO PROFILE
+                                },
+                            contentScale = ContentScale.Crop,
+                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                .data(user.profilePic)
+                                .crossfade(true)
+                                .crossfade(500)
+                                .build(),
+                            //TODO: USE THE REAL IMAGE ERROR .error(),
+                            contentDescription = null
+                        )
                     }
-                    HorizontalDivider()
+                },
+                body = {
                     DisplayRevenues(
                         revenues = revenues,
                         navToProject = { revenue ->
-                            // TODO: NAV TO PROJECT
+                            navigator.navigate(
+                                route = PROJECT_REVENUE_SCREEN + revenue.id
+                            )
                         }
                     )
                 }
-            }
+            )
         }
     }
 

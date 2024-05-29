@@ -13,18 +13,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.SwipeToDismissBoxValue.EndToStart
 import androidx.compose.material3.SwipeToDismissBoxValue.StartToEnd
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -339,6 +333,55 @@ fun LabelBadge(
     }
 }
 
+//TODO: TO IMPORT IN ANDROID
+@Composable
+fun DisplayTickets(
+    projectRevenue: MutableState<ProjectRevenue>
+) {
+    val tickets = projectRevenue.value.tickets.toMutableStateList()
+    if(tickets.isNotEmpty()) {
+        LazyColumn {
+            item {
+                GeneralRevenue(
+                    revenue = projectRevenue.value.initialRevenue
+                )
+            }
+            items(
+                key = { ticket -> ticket.id },
+                items = tickets
+            ) { ticket ->
+                SwipeToDeleteContainer(
+                    item = ticket,
+                    onRight = if(!ticket.isClosed) {
+                        {
+                            // TODO: MAKE REQUEST THEN
+                            ticket.isClosed = true
+                        }
+                    } else
+                        null,
+                    onDelete = {
+                        // TODO: MAKE REQUEST THEN
+                        tickets.remove(ticket)
+                    }
+                ) {
+                    GeneralRevenue(
+                        revenue = ticket
+                    )
+                }
+                HorizontalDivider()
+            }
+        }
+    } else {
+        GeneralRevenue(
+            revenue = projectRevenue.value.initialRevenue
+        )
+        EmptyListUI(
+            icon = Icons.AutoMirrored.Filled.StickyNote2,
+            subText = Res.string.no_tickets_yet
+        )
+    }
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InsertionLabelBadge(
@@ -529,6 +572,10 @@ fun NeutronAlertDialog(
 ) {
     if(show.value) {
         AlertDialog(
+            modifier = Modifier
+                .widthIn(
+                    max = 400.dp
+                ),
             icon = {
                 if(icon != null) {
                     Icon(
@@ -704,5 +751,12 @@ fun ErrorUI() {
             text = stringResource(Res.string.an_error_occurred),
             color = errorContainerDark
         )
+        TextButton(
+            onClick = { navigator.goBack() }
+        ) {
+            Text(
+                text = stringResource(Res.string.go_back)
+            )
+        }
     }
 }

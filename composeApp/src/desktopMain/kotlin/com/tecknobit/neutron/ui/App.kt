@@ -5,7 +5,9 @@ import com.tecknobit.neutron.ui.screens.Screen.Companion.HOME_SCREEN
 import com.tecknobit.neutron.ui.screens.Screen.Companion.SPLASH_SCREEN
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen
 import com.tecknobit.neutron.ui.screens.session.Home
+import com.tecknobit.neutron.ui.screens.session.ProjectRevenueScreen
 import com.tecknobit.neutron.ui.theme.NeutronTheme
+import com.tecknobit.neutroncore.records.NeutronItem.IDENTIFIER_KEY
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
@@ -41,6 +43,13 @@ fun App() {
                     route = HOME_SCREEN
                 ) {
                     Home().ShowScreen()
+                }
+                scene(
+                    route = "project_revenue/{$IDENTIFIER_KEY}"
+                ) { backstackEntry ->
+                    ProjectRevenueScreen(
+                        projectRevenueId = backstackEntry.pathMap[IDENTIFIER_KEY]
+                    ).ShowScreen()
                 }
             }
         }
