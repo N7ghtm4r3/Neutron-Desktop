@@ -29,6 +29,7 @@ import com.tecknobit.neutron.ui.getWalletBalance
 import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.screens.Screen
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutron.ui.sections.addsections.AddRevenuesSection
 import com.tecknobit.neutroncore.records.revenues.*
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.earnings
@@ -154,13 +155,12 @@ class Home: Screen() {
     @Composable
     override fun ShowScreen() {
         // TODO: USE THE REAL DATA
+        val addRevenue = remember { mutableStateOf(false) }
         val walletTrendPercent by remember { mutableDoubleStateOf(1.0) }
         Scaffold (
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = {
-                        // TODO: NAV TO CREATE REVENUE
-                    }
+                    onClick = { addRevenue.value = true }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -169,6 +169,7 @@ class Home: Screen() {
                 }
             }
         ) {
+            AddRevenuesSection(addRevenue).AddRevenue()
             DisplayContent(
                 header = {
                     Column(

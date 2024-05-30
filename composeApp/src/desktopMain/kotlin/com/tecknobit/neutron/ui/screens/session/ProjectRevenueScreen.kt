@@ -21,6 +21,7 @@ import com.tecknobit.neutron.ui.*
 import com.tecknobit.neutron.ui.screens.Screen
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutron.ui.screens.session.Home.Companion.revenues
+import com.tecknobit.neutron.ui.sections.addsections.AddTicketRevenueSection
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.delete_project
@@ -40,15 +41,14 @@ class ProjectRevenueScreen(
     override fun ShowScreen() {
         if(projectRevenueId != null) {
             val currentProjectRevenue = revenues.getProjectRevenue(projectRevenueId)
+            val addTicket = remember { mutableStateOf(false) }
             if(currentProjectRevenue != null) {
                 projectRevenue = remember { mutableStateOf(currentProjectRevenue) }
                 showDeleteProject = remember { mutableStateOf(false) }
                 Scaffold (
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = {
-                                // TODO: NAV TO CREATE REVENUE
-                            }
+                            onClick = { addTicket.value = true }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -57,6 +57,10 @@ class ProjectRevenueScreen(
                         }
                     }
                 ) {
+                    AddTicketRevenueSection(
+                        show = addTicket,
+                        projectRevenue = projectRevenue.value
+                    ).AddRevenue()
                     DisplayContent(
                         header = {
                             Column {
