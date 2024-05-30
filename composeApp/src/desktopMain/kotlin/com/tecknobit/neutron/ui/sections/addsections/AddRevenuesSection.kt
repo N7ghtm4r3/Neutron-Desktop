@@ -19,9 +19,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.godaddy.android.colorpicker.ClassicColorPicker
+import com.godaddy.android.colorpicker.HsvColor
 import com.tecknobit.neutron.ui.InsertionLabelBadge
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronTextField
@@ -211,12 +215,13 @@ class AddRevenuesSection(
         showAddLabel: MutableState<Boolean>,
         labels: SnapshotStateList<RevenueLabel>
     ) {
-        //val controller = rememberColorPickerController()
         if(showAddLabel.value) {
             Dialog(
                 onDismissRequest = { showAddLabel.value = false },
             ) {
                 Card (
+                    modifier = Modifier
+                        .width(400.dp),
                     shape = RoundedCornerShape(
                         size = 15.dp
                     )
@@ -259,18 +264,18 @@ class AddRevenuesSection(
                             value = labelText,
                             label = Res.string.label_text
                         )
-                        // TODO: TO IMPLEMENT A COLOR PICKER
-                        /*HsvColorPicker(
+                        ClassicColorPicker(
                             modifier = Modifier
                                 .padding(
-                                    top = 10.dp
+                                    top = 16.dp
                                 )
-                                .fillMaxWidth()
-                                .height(200.dp),
-                            controller = controller,
-                            initialColor = Color.White,
-                            onColorChanged = { colorEnvelope -> hexColor = colorEnvelope.hexCode }
-                        )*/
+                                .size(250.dp),
+                            onColorChanged = { color: HsvColor ->
+                                hexColor = "#" + Integer.toHexString(color.toColor().toArgb()).substring(2)
+                            },
+                            showAlphaBar = false,
+                            color = HsvColor.from(Color.White)
+                        )
                         Row (
                             modifier = Modifier
                                 .fillMaxWidth(),
