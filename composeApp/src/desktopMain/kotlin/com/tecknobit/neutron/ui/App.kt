@@ -6,10 +6,12 @@ import coil3.addLastModifiedToFileCacheKey
 import coil3.compose.LocalPlatformContext
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
 import coil3.request.CachePolicy
+import com.tecknobit.neutron.ui.screens.Screen.Companion.CONNECT_SCREEN
 import com.tecknobit.neutron.ui.screens.Screen.Companion.HOME_SCREEN
 import com.tecknobit.neutron.ui.screens.Screen.Companion.PROFILE_SCREEN
 import com.tecknobit.neutron.ui.screens.Screen.Companion.SPLASH_SCREEN
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen
+import com.tecknobit.neutron.ui.screens.session.ConnectScreen
 import com.tecknobit.neutron.ui.screens.session.Home
 import com.tecknobit.neutron.ui.screens.session.ProfileScreen
 import com.tecknobit.neutron.ui.screens.session.ProjectRevenueScreen
@@ -104,6 +106,13 @@ fun App() {
             ) {
                 NeutronTheme {
                     ProfileScreen().ShowScreen()
+                }
+            }
+            scene(
+                route = CONNECT_SCREEN
+            ) {
+                NeutronTheme {
+                    ConnectScreen().ShowScreen()
                 }
             }
         }

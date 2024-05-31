@@ -83,7 +83,7 @@ class Splashscreen : Screen() {
         LaunchedEffect(true) {
             delay(250L)
             // TODO: MAKE THE REAL NAVIGATION
-            navigator.navigate(HOME_SCREEN)
+            navigator.navigate(CONNECT_SCREEN)
         }
     }
 

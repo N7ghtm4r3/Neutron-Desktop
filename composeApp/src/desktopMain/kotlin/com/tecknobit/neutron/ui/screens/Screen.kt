@@ -25,6 +25,8 @@ abstract class Screen {
 
         const val PROFILE_SCREEN = "profile"
 
+        const val CONNECT_SCREEN = "connect"
+
     }
 
     @Composable
