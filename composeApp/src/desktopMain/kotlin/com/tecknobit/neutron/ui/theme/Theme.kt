@@ -6,6 +6,9 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutroncore.records.User.ApplicationTheme.Dark
+import com.tecknobit.neutroncore.records.User.ApplicationTheme.Light
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -249,14 +252,14 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun NeutronTheme(
-    darkTheme: Boolean = /*if(user != null) {
+    darkTheme: Boolean = if(user != null) {
         when(user.theme) {
             Light -> false
             Dark -> true
             else -> isSystemInDarkTheme()
         }
-    } else*/
-        isSystemInDarkTheme(), // TODO: TO FIX THE NEGATION AND MAKE THE REAL WORKFLOW WITH THE USER
+    } else
+        isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

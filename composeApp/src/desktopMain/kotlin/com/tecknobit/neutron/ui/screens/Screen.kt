@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 abstract class Screen {
@@ -22,6 +23,8 @@ abstract class Screen {
 
         const val PROJECT_REVENUE_SCREEN = "project_revenue/"
 
+        const val PROFILE_SCREEN = "profile"
+
     }
 
     @Composable
@@ -29,6 +32,7 @@ abstract class Screen {
 
     @Composable
     protected fun DisplayContent(
+        headerHeight: Dp = 175.dp,
         header: @Composable RowScope.() -> Unit,
         body: @Composable () -> Unit
     ) {
@@ -56,7 +60,7 @@ abstract class Screen {
             ) {
                 Column (
                     modifier = Modifier
-                        .height(175.dp)
+                        .height(headerHeight)
                 ) {
                     Row (
                         modifier = Modifier

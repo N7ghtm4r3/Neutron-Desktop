@@ -21,6 +21,7 @@ kotlin {
             implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-alpha06")
             implementation("com.godaddy.android.colorpicker:compose-color-picker-jvm:0.7.0")
+            implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

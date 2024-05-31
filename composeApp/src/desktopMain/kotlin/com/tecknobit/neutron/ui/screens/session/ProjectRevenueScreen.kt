@@ -137,6 +137,7 @@ class ProjectRevenueScreen(
             text = Res.string.delete_project_warn_text,
             confirmAction = {
                 // TODO: MAKE THE REQUEST THEN
+                showDeleteProject.value = false
                 navigator.goBack()
             }
         )

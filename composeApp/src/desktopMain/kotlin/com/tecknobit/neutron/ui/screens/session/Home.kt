@@ -23,10 +23,7 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.tecknobit.apimanager.trading.TradingTools.textualizeAssetPercent
-import com.tecknobit.neutron.ui.DisplayRevenues
-import com.tecknobit.neutron.ui.bodyFontFamily
-import com.tecknobit.neutron.ui.getWalletBalance
-import com.tecknobit.neutron.ui.navigator
+import com.tecknobit.neutron.ui.*
 import com.tecknobit.neutron.ui.screens.Screen
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutron.ui.sections.addsections.AddRevenuesSection
@@ -46,6 +43,7 @@ class Home: Screen() {
 
     init {
         // TODO: LOAD CORRECTLY
+        revenues.clear()
         revenues.add(
             ProjectRevenue(
                 "gag",
@@ -202,9 +200,8 @@ class Home: Screen() {
                                     shape = CircleShape
                                 )
                                 .clip(CircleShape)
-                                .clickable {
-                                    // TODO: NAV TO PROFILE
-                                },
+                                .clickable { navigator.navigate(PROFILE_SCREEN) },
+                            imageLoader = imageLoader,
                             contentScale = ContentScale.Crop,
                             model = ImageRequest.Builder(LocalPlatformContext.current)
                                 .data(user.profilePic)
