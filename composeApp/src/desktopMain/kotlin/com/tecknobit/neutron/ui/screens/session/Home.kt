@@ -31,6 +31,7 @@ import com.tecknobit.neutroncore.records.revenues.*
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.earnings
 import neutron.composeapp.generated.resources.last_month
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class Home: Screen() {
@@ -150,6 +151,7 @@ class Home: Screen() {
         )
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {
         // TODO: USE THE REAL DATA

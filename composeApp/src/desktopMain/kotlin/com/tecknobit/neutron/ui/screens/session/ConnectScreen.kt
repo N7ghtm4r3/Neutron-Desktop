@@ -34,6 +34,7 @@ import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.screens.Screen
 import neutron.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.json.JSONObject
@@ -85,6 +86,7 @@ class ConnectScreen: Screen() {
         }
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun HeaderSection() {
         Column (
@@ -155,6 +157,7 @@ class ConnectScreen: Screen() {
         }
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun FormSection() {
         Column (
@@ -320,7 +323,7 @@ class ConnectScreen: Screen() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
     @Composable
     private fun LoginQrCode() {
         val qrCodeHelper = QRCodeHelper()

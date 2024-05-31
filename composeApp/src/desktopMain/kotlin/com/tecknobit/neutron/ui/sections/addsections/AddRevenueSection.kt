@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.tecknobit.neutron.ui.sections.addsections
 
 import androidx.compose.animation.AnimatedVisibility
@@ -30,6 +32,7 @@ import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
 import neutron.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import java.util.*

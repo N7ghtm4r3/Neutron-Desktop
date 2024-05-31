@@ -40,6 +40,7 @@ import com.tecknobit.neutroncore.records.User.UserStorage.Local
 import com.tecknobit.neutroncore.records.User.UserStorage.Online
 import kotlinx.coroutines.delay
 import neutron.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import java.util.*
@@ -57,6 +58,7 @@ class ProfileScreen: Screen() {
      */
     private val fileType = listOf("jpg", "png", "jpeg")
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {
         theme = remember { mutableStateOf(user.theme) }
@@ -335,7 +337,7 @@ class ProfileScreen: Screen() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
     @Composable
     private fun HostLocalSignIn() {
         val isListening = remember { mutableStateOf(true) }
@@ -405,6 +407,7 @@ class ProfileScreen: Screen() {
             isListening.value = true
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun UserInfo(
         header: StringResource,
@@ -591,7 +594,7 @@ class ProfileScreen: Screen() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
     @Composable
     private fun ChangeStorage(
         changeStorage: MutableState<Boolean>
@@ -765,6 +768,7 @@ class ProfileScreen: Screen() {
         }
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun ResponseStatusUI(
         isWaiting: MutableState<Boolean>,

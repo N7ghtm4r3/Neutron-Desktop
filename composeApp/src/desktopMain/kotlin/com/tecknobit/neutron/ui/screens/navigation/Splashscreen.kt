@@ -1,13 +1,13 @@
 package com.tecknobit.neutron.ui.screens.navigation
 
+import UpdaterDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,10 +22,11 @@ import com.tecknobit.neutron.ui.theme.primaryLight
 import com.tecknobit.neutroncore.records.User
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import com.tecknobit.neutroncore.records.revenues.RevenueLabel
-import kotlinx.coroutines.delay
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.app_name
+import neutron.composeapp.generated.resources.app_version
 import neutron.composeapp.generated.resources.project
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class Splashscreen : Screen() {
@@ -37,8 +38,10 @@ class Splashscreen : Screen() {
 
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {
+        var startApp by remember { mutableStateOf(true) }
         PROJECT_LABEL = RevenueLabel(
             stringResource(Res.string.project),
             ProjectRevenue.PROJECT_LABEL_COLOR
@@ -80,8 +83,17 @@ class Splashscreen : Screen() {
                 )
             }
         }
-        LaunchedEffect(true) {
-            delay(250L)
+        UpdaterDialog(
+            appName = stringResource(Res.string.app_name),
+            currentVersion = stringResource(Res.string.app_version),
+            onUpdateAvailable = {
+                startApp = false
+            },
+            dismissAction = {
+                startApp = true
+            }
+        )
+        if(startApp) {
             // TODO: MAKE THE REAL NAVIGATION
             navigator.navigate(CONNECT_SCREEN)
         }

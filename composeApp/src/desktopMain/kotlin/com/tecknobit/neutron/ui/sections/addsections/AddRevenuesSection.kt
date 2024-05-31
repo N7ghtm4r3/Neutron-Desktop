@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.tecknobit.neutron.ui.sections.addsections
 
 import androidx.compose.animation.AnimatedVisibility
@@ -32,6 +34,7 @@ import com.tecknobit.neutron.ui.NeutronTextField
 import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutroncore.records.revenues.RevenueLabel
 import neutron.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class AddRevenuesSection(

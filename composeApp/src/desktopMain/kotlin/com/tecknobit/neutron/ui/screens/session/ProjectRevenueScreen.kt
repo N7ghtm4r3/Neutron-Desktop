@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package com.tecknobit.neutron.ui.screens.session
 
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.delete_project
 import neutron.composeapp.generated.resources.delete_project_warn_text
 import neutron.composeapp.generated.resources.total_revenues
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class ProjectRevenueScreen(

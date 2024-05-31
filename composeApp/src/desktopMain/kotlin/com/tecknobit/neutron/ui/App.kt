@@ -25,6 +25,7 @@ import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.anektelugu
 import neutron.composeapp.generated.resources.lilitaone
 import okhttp3.OkHttpClient
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
@@ -49,6 +50,7 @@ private val sslContext = SSLContext.getInstance("TLS")
  */
 lateinit var imageLoader: ImageLoader
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {
     bodyFontFamily = FontFamily(Font(Res.font.anektelugu))

@@ -5,7 +5,6 @@ import java.util.*
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -23,6 +22,7 @@ kotlin {
             implementation("com.godaddy.android.colorpicker:compose-color-picker-jvm:0.7.0")
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation("org.json:json:20240303")
+            implementation("com.github.N7ghtm4r3:OctocatKDU:1.0.3")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

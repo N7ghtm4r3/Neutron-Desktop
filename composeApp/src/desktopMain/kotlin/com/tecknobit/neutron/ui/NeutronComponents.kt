@@ -36,12 +36,14 @@ import com.tecknobit.neutroncore.records.revenues.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import neutron.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import java.util.concurrent.TimeUnit
 
 lateinit var PROJECT_LABEL: RevenueLabel
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DisplayRevenues(
     revenues: SnapshotStateList<Revenue>,
@@ -94,7 +96,7 @@ fun DisplayRevenues(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun GeneralRevenue(
     revenue: Revenue
@@ -244,6 +246,7 @@ private fun ProjectRevenue(
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun RevenueInfo(
     revenue: Revenue
@@ -334,6 +337,7 @@ fun LabelBadge(
 }
 
 //TODO: TO IMPORT IN ANDROID
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DisplayTickets(
     projectRevenue: MutableState<ProjectRevenue>
@@ -528,6 +532,7 @@ private fun SwipeBackground(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronAlertDialog(
     show: MutableState<Boolean>,
@@ -558,6 +563,7 @@ fun NeutronAlertDialog(
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronAlertDialog(
     show: MutableState<Boolean>,
@@ -613,6 +619,7 @@ fun NeutronAlertDialog(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronTextField(
     modifier: Modifier = Modifier,
@@ -639,6 +646,7 @@ fun NeutronTextField(
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronOutlinedTextField(
     modifier: Modifier = Modifier,
@@ -678,6 +686,7 @@ fun NeutronOutlinedTextField(
     )
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronButton(
     modifier: Modifier = Modifier,
@@ -702,6 +711,7 @@ fun NeutronButton(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun EmptyListUI(
     icon: ImageVector,
@@ -729,6 +739,7 @@ fun EmptyListUI(
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ErrorUI() {
     Column (
