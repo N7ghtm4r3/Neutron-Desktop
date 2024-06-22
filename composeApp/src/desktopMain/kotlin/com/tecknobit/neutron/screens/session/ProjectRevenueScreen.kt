@@ -11,19 +11,18 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.neutron.screens.Screen
-import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.screens.session.Home.Companion.revenues
 import com.tecknobit.neutron.sections.addsections.AddTicketRevenueSection
 import com.tecknobit.neutron.ui.*
+import com.tecknobit.neutron.viewmodels.ProjectRevenueActivityViewModel
+import com.tecknobit.neutron.viewmodels.addactivities.AddTicketViewModel
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.delete_project
@@ -36,19 +35,28 @@ class ProjectRevenueScreen(
     val projectRevenueId: String?
 ): Screen() {
 
-    private lateinit var projectRevenue: MutableState<ProjectRevenue>
+    private lateinit var projectRevenue: State<ProjectRevenue>
 
-    private lateinit var showDeleteProject: MutableState<Boolean>
+    private lateinit var viewModel: ProjectRevenueActivityViewModel
+
+    private lateinit var addTicket: MutableState<Boolean>
 
     @Composable
     override fun ShowScreen() {
         if(projectRevenueId != null) {
-            val currentProjectRevenue = revenues.getProjectRevenue(projectRevenueId)
-            val addTicket = remember { mutableStateOf(false) }
+            val currentProjectRevenue = revenues.value!!.getProjectRevenue(projectRevenueId)
+            addTicket = remember { mutableStateOf(false) }
             if(currentProjectRevenue != null) {
-                projectRevenue = remember { mutableStateOf(currentProjectRevenue) }
-                showDeleteProject = remember { mutableStateOf(false) }
+                viewModel = ProjectRevenueActivityViewModel(
+                    snackbarHostState = snackbarHostState,
+                    initialProjectRevenue = currentProjectRevenue
+                )
+                viewModel.setActiveContext(this::class.java)
+                viewModel.showDeleteProject = remember { mutableStateOf(false) }
+                viewModel.refreshProjectRevenue()
+                projectRevenue = viewModel.projectRevenue.collectAsState()
                 Scaffold (
+                    snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = { addTicket.value = true }
@@ -60,10 +68,7 @@ class ProjectRevenueScreen(
                         }
                     }
                 ) {
-                    AddTicketRevenueSection(
-                        show = addTicket,
-                        projectRevenue = projectRevenue.value
-                    ).AddRevenue()
+                    CreateTicket()
                     DisplayContent(
                         header = {
                             Column {
@@ -87,7 +92,7 @@ class ProjectRevenueScreen(
                                         horizontalAlignment = Alignment.End
                                     ) {
                                         IconButton(
-                                            onClick = { showDeleteProject.value = true }
+                                            onClick = { viewModel.showDeleteProject.value = true }
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Delete,
@@ -111,7 +116,7 @@ class ProjectRevenueScreen(
                                         text = stringResource(
                                             Res.string.total_revenues,
                                             projectRevenue.value.value,
-                                            user.currency.symbol
+                                            localUser.currency.symbol
                                         ),
                                         fontSize = 20.sp
                                     )
@@ -120,7 +125,17 @@ class ProjectRevenueScreen(
                         },
                         body = {
                             DisplayTickets(
-                                projectRevenue = projectRevenue
+                                projectRevenue = projectRevenue.value,
+                                onRight = { ticket ->
+                                    viewModel.closeTicket(
+                                        ticket = ticket
+                                    )
+                                },
+                                onDelete = { ticket ->
+                                    viewModel.deleteTicket(
+                                        ticket = ticket
+                                    )
+                                }
                             )
                         }
                     )
@@ -133,17 +148,31 @@ class ProjectRevenueScreen(
 
     @Composable
     private fun DeleteProjectRevenue() {
+        if (viewModel.showDeleteProject.value)
+            viewModel.suspendRefresher()
         NeutronAlertDialog(
             icon = Icons.Default.Delete,
-            show = showDeleteProject,
+            show = viewModel.showDeleteProject,
             title = Res.string.delete_project,
             text = Res.string.delete_project_warn_text,
             confirmAction = {
-                // TODO: MAKE THE REQUEST THEN
-                showDeleteProject.value = false
-                navigator.goBack()
+                viewModel.deleteProjectRevenue {
+                    navigator.goBack()
+                }
             }
         )
+    }
+
+    @Composable
+    private fun CreateTicket() {
+        val ticketViewModel = AddTicketViewModel(
+            snackbarHostState = snackbarHostState
+        )
+        AddTicketRevenueSection(
+            show = addTicket,
+            projectRevenue = projectRevenue.value,
+            viewModel = ticketViewModel
+        ).AddRevenue()
     }
 
 }

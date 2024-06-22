@@ -2,7 +2,6 @@ package com.tecknobit.neutron.screens.session
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -13,10 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -24,22 +20,21 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
 import com.tecknobit.neutron.screens.Screen
-import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
-import com.tecknobit.neutron.ui.*
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
+import com.tecknobit.neutron.ui.NeutronAlertDialog
+import com.tecknobit.neutron.ui.NeutronOutlinedTextField
+import com.tecknobit.neutron.ui.displayFontFamily
+import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.theme.NeutronTheme
 import com.tecknobit.neutron.ui.theme.errorLight
-import com.tecknobit.neutroncore.helpers.InputValidator.LANGUAGES_SUPPORTED
+import com.tecknobit.neutron.viewmodels.ProfileActivityViewModel
+import com.tecknobit.neutroncore.helpers.InputValidator.*
 import com.tecknobit.neutroncore.records.User.ApplicationTheme
 import com.tecknobit.neutroncore.records.User.ApplicationTheme.*
 import com.tecknobit.neutroncore.records.User.NeutronCurrency
 import com.tecknobit.neutroncore.records.User.UserStorage.Local
-import com.tecknobit.neutroncore.records.User.UserStorage.Online
 import kotlinx.coroutines.delay
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -53,7 +48,11 @@ class ProfileScreen: Screen() {
 
     private lateinit var hostLocalSignIn: MutableState<Boolean>
 
-    private val currentStorageIsLocal = user.storage == Local
+    private val currentStorageIsLocal = localUser.storage == Local
+
+    private val viewModel = ProfileActivityViewModel(
+        snackbarHostState = snackbarHostState
+    )
 
     /**
      * **fileType** -> list of allowed image types
@@ -63,8 +62,9 @@ class ProfileScreen: Screen() {
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {
-        theme = remember { mutableStateOf(user.theme) }
-        var profilePic by remember { mutableStateOf(user.profilePic) }
+        viewModel.setActiveContext(this::class.java)
+        theme = remember { mutableStateOf(localUser.theme) }
+        val profilePic = remember { mutableStateOf(localUser.profilePic) }
         var pickProfilePic by remember { mutableStateOf(false) }
         NeutronTheme (
             darkTheme = when(theme.value) {
@@ -93,8 +93,9 @@ class ProfileScreen: Screen() {
                         title = Res.string.delete,
                         text = Res.string.delete_message,
                         confirmAction = {
-                            // TODO: MAKE THE REQUEST THEN
-                            navToSplash()
+                            viewModel.deleteAccount {
+                                navToSplash()
+                            }
                         }
                     )
                 }
@@ -145,7 +146,15 @@ class ProfileScreen: Screen() {
                                     }
                                 }
                             }
-                            AsyncImage(
+                            //TODO: TO FIX
+                            Button(
+                                onClick = {
+                                    pickProfilePic = true
+                                }
+                            ) {
+                                Text("to remove")
+                            }
+                            /*AsyncImage(
                                 modifier = Modifier
                                     .size(150.dp)
                                     .align(Alignment.CenterHorizontally)
@@ -164,21 +173,16 @@ class ProfileScreen: Screen() {
                                     .build(),
                                 //TODO: USE THE REAL IMAGE ERROR .error(),
                                 contentDescription = null
-                            )
+                            )*/
                             FilePicker(
                                 show = pickProfilePic,
                                 fileExtensions = fileType
                             ) { profilePicPath ->
                                 if(profilePicPath != null) {
-                                    // TODO: MAKE THE REQUEST THEN
-
-                                    // TODO: TO REMOVE
-                                    profilePic = "https://t4.ftcdn.net/jpg/03/86/82/73/360_F_386827376_uWOOhKGk6A4UVL5imUBt20Bh8cmODqzx.jpg"
-
-                                    // TODO: TO USE THIS INSTEAD THE REAL PATH FROM THE REQUEST RESPONSE
-                                    //  profilePic = PATH FROM THE REQUEST RESPONSE
-
-                                    user.profilePic = profilePic
+                                    viewModel.changeProfilePic(
+                                        imagePath = profilePicPath.path,
+                                        profilePic = profilePic
+                                    )
                                 }
                             }
                             Text(
@@ -188,7 +192,7 @@ class ProfileScreen: Screen() {
                                         bottom = 16.dp
                                     )
                                     .fillMaxWidth(),
-                                text = user.completeName,
+                                text = localUser.completeName,
                                 fontFamily = displayFontFamily,
                                 fontSize = 20.sp
                             )
@@ -200,36 +204,50 @@ class ProfileScreen: Screen() {
                                 .verticalScroll(rememberScrollState())
                         ) {
                             val showChangeEmailAlert = remember { mutableStateOf(false) }
-                            var userEmail by remember { mutableStateOf(user.email) }
-                            val newEmail = remember { mutableStateOf("") }
+                            var userEmail by remember { mutableStateOf(localUser.email) }
+                            viewModel.newEmail = remember { mutableStateOf("") }
+                            viewModel.newEmailError = remember { mutableStateOf(false) }
+                            val resetEmailLayout = {
+                                viewModel.newEmail.value = ""
+                                viewModel.newEmailError.value = false
+                                showChangeEmailAlert.value = false
+                            }
                             UserInfo(
                                 header = Res.string.email,
                                 info = userEmail,
                                 onClick = { showChangeEmailAlert.value = true }
                             )
                             NeutronAlertDialog(
-                                dismissAction = {
-                                    newEmail.value = ""
-                                    showChangeEmailAlert.value = false
-                                },
+                                onDismissAction = resetEmailLayout,
                                 icon = Icons.Default.Email,
                                 show = showChangeEmailAlert,
                                 title = Res.string.change_email,
                                 text = {
                                     NeutronOutlinedTextField(
-                                        value = newEmail,
-                                        label = Res.string.new_email
+                                        value = viewModel.newEmail,
+                                        label = Res.string.new_email,
+                                        errorText = Res.string.email_not_valid,
+                                        isError = viewModel.newEmailError,
+                                        validator = { isEmailValid(it) }
                                     )
                                 },
                                 confirmAction = {
-                                    // TODO: MAKE THE REQUEST AND SAVE IN LOCAL THEN
-                                    userEmail = newEmail.value
-                                    user.email = userEmail
-                                    showChangeEmailAlert.value = false
+                                    viewModel.changeEmail(
+                                        onSuccess = {
+                                            userEmail = viewModel.newEmail.value
+                                            resetEmailLayout.invoke()
+                                        }
+                                    )
                                 }
                             )
                             val showChangePasswordAlert = remember { mutableStateOf(false) }
-                            val newPassword = remember { mutableStateOf("") }
+                            viewModel.newPassword = remember { mutableStateOf("") }
+                            viewModel.newPasswordError = remember { mutableStateOf(false) }
+                            val resetPasswordLayout = {
+                                viewModel.newPassword.value = ""
+                                viewModel.newPasswordError.value = false
+                                showChangePasswordAlert.value = false
+                            }
                             var hiddenPassword by remember { mutableStateOf(true) }
                             UserInfo(
                                 header = Res.string.password,
@@ -237,16 +255,13 @@ class ProfileScreen: Screen() {
                                 onClick = { showChangePasswordAlert.value = true }
                             )
                             NeutronAlertDialog(
-                                dismissAction = {
-                                    newPassword.value = ""
-                                    showChangePasswordAlert.value = false
-                                },
+                                onDismissAction = resetPasswordLayout,
                                 icon = Icons.Default.Password,
                                 show = showChangePasswordAlert,
                                 title = Res.string.change_password,
                                 text = {
                                     NeutronOutlinedTextField(
-                                        value = newPassword,
+                                        value = viewModel.newPassword,
                                         label = Res.string.new_password,
                                         trailingIcon = {
                                             IconButton(
@@ -267,25 +282,29 @@ class ProfileScreen: Screen() {
                                             VisualTransformation.None,
                                         keyboardOptions = KeyboardOptions(
                                             keyboardType = KeyboardType.Password
-                                        )
+                                        ),
+                                        errorText = Res.string.password_not_valid,
+                                        isError = viewModel.newPasswordError,
+                                        validator = { isPasswordValid(it) }
                                     )
                                 },
                                 confirmAction = {
-                                    // TODO: MAKE THE REQUEST AND SAVE IN LOCAL THEN
-                                    showChangePasswordAlert.value = false
+                                    viewModel.changePassword(
+                                        onSuccess = resetPasswordLayout
+                                    )
                                 }
                             )
                             val changeLanguage = remember { mutableStateOf(false) }
                             UserInfo(
                                 header = Res.string.language,
-                                info = LANGUAGES_SUPPORTED[user.language]!!,
+                                info = LANGUAGES_SUPPORTED[localUser.language]!!,
                                 onClick = { changeLanguage.value = true }
                             )
                             ChangeLanguage(
                                 changeLanguage = changeLanguage
                             )
                             val changeCurrency = remember { mutableStateOf(false) }
-                            val currency = remember { mutableStateOf(user.currency.isoName) }
+                            val currency = remember { mutableStateOf(localUser.currency.isoName) }
                             UserInfo(
                                 header = Res.string.currency,
                                 info = currency.value,
@@ -298,7 +317,7 @@ class ProfileScreen: Screen() {
                             val changeTheme = remember { mutableStateOf(false) }
                             UserInfo(
                                 header = Res.string.theme,
-                                info = user.theme.name,
+                                info = localUser.theme.name,
                                 buttonText = Res.string.change,
                                 onClick = { changeTheme.value = true }
                             )
@@ -308,7 +327,7 @@ class ProfileScreen: Screen() {
                             val showChangeStorage = remember { mutableStateOf(false) }
                             UserInfo(
                                 header = Res.string.storage_data,
-                                info = user.storage.name,
+                                info = localUser.storage.name,
                                 buttonText = Res.string.change,
                                 onClick = { showChangeStorage.value = true }
                             )
@@ -328,8 +347,9 @@ class ProfileScreen: Screen() {
                                 title = Res.string.logout,
                                 text = Res.string.logout_message,
                                 confirmAction = {
-                                    // TODO: MAKE THE OPE TO LOGOUT THEN
-                                    navToSplash()
+                                    viewModel.clearSession {
+                                        navToSplash()
+                                    }
                                 }
                             )
                         }
@@ -478,10 +498,13 @@ class ProfileScreen: Screen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // TODO: MAKE THE REQUEST THEN
-                            user.language = language
-                            changeLanguage.value = false
-                            navToSplash()
+                            viewModel.changeLanguage(
+                                newLanguage = language,
+                                onSuccess = {
+                                    changeLanguage.value = false
+                                    navToSplash()
+                                }
+                            )
                         }
                         .padding(
                             all = 16.dp
@@ -492,7 +515,7 @@ class ProfileScreen: Screen() {
                     Icon(
                         imageVector = Icons.Default.Flag,
                         contentDescription = null,
-                        tint = if(user.language == language)
+                        tint = if (localUser.language == language)
                             MaterialTheme.colorScheme.primary
                         else
                             LocalContentColor.current
@@ -521,10 +544,13 @@ class ProfileScreen: Screen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // TODO: MAKE THE REQUEST AND FETCH THE NEW CHANGE RATE THEN
-                            user.currency = currency
-                            currencyValue.value = currency.isoName
-                            changeCurrency.value = false
+                            viewModel.changeCurrency(
+                                newCurrency = currency,
+                                onSuccess = {
+                                    currencyValue.value = currency.isoName
+                                    changeCurrency.value = false
+                                }
+                            )
                         }
                         .padding(
                             all = 16.dp
@@ -535,7 +561,7 @@ class ProfileScreen: Screen() {
                     Icon(
                         imageVector = Icons.Default.Flag,
                         contentDescription = null,
-                        tint = if(user.currency == currency)
+                        tint = if (localUser.currency == currency)
                             MaterialTheme.colorScheme.primary
                         else
                             LocalContentColor.current
@@ -563,10 +589,13 @@ class ProfileScreen: Screen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            // TODO: MAKE THE REQUEST THEN
-                            user.theme = theme
-                            changeTheme.value = false
-                            this@ProfileScreen.theme.value = theme
+                            viewModel.changeTheme(
+                                newTheme = theme,
+                                onChange = {
+                                    changeTheme.value = false
+                                    this@ProfileScreen.theme.value = theme
+                                }
+                            )
                         }
                         .padding(
                             all = 16.dp
@@ -581,7 +610,7 @@ class ProfileScreen: Screen() {
                             else -> Icons.Default.AutoMode
                         },
                         contentDescription = null,
-                        tint = if(user.theme == theme)
+                        tint = if (localUser.theme == theme)
                             MaterialTheme.colorScheme.primary
                         else
                             LocalContentColor.current
@@ -601,29 +630,33 @@ class ProfileScreen: Screen() {
     private fun ChangeStorage(
         changeStorage: MutableState<Boolean>
     ) {
-        val hostAddress = remember { mutableStateOf("") }
-        val serverSecret = remember { mutableStateOf("") }
-        var isExecuting by remember { mutableStateOf(false) }
-        val waiting = remember { mutableStateOf(true) }
-        val success = remember { mutableStateOf(false) }
+        viewModel.hostAddress = remember { mutableStateOf("") }
+        viewModel.hostError = remember { mutableStateOf(false) }
+        viewModel.serverSecret = remember { mutableStateOf("") }
+        viewModel.serverSecretError = remember { mutableStateOf(false) }
+        viewModel.isExecuting = remember { mutableStateOf(false) }
+        viewModel.waiting = remember { mutableStateOf(true) }
+        viewModel.success = remember { mutableStateOf(false) }
         val executeRequest = {
-            isExecuting = true
-            waiting.value = true
-            success.value = false
-            // TODO: MAKE THE REQUEST THEN
+            viewModel.isExecuting.value = true
+            viewModel.waiting.value = true
+            viewModel.success.value = false
+            viewModel.changeStorage()
         }
         val resetLayout = {
-            isExecuting = false
-            hostAddress.value = ""
-            serverSecret.value = ""
+            viewModel.isExecuting.value = false
+            viewModel.hostAddress.value = ""
+            viewModel.hostError.value = false
+            viewModel.serverSecret.value = ""
+            viewModel.serverSecretError.value = false
             changeStorage.value = false
-            waiting.value = true
-            success.value = false
+            viewModel.waiting.value = true
+            viewModel.success.value = false
         }
         ChangeInfo(
             showModal = changeStorage,
             sheetState = rememberModalBottomSheetState(
-                confirmValueChange = { !isExecuting || success.value }
+                confirmValueChange = { !viewModel.isExecuting.value || viewModel.success.value }
             ),
             onDismissRequest = { resetLayout.invoke() }
         ) {
@@ -635,7 +668,7 @@ class ProfileScreen: Screen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                if(!isExecuting) {
+                if (!viewModel.isExecuting.value) {
                     val awareText = stringResource(
                         if(currentStorageIsLocal)
                             Res.string.aware_server_message
@@ -655,7 +688,7 @@ class ProfileScreen: Screen() {
                         NeutronOutlinedTextField(
                             modifier = Modifier
                                 .width(300.dp),
-                            value = hostAddress,
+                            value = viewModel.hostAddress,
                             label = Res.string.host_address,
                             keyboardOptions = KeyboardOptions(
                                 imeAction = ImeAction.Next
@@ -664,23 +697,15 @@ class ProfileScreen: Screen() {
                         NeutronOutlinedTextField(
                             modifier = Modifier
                                 .width(300.dp),
-                            value = serverSecret,
+                            value = viewModel.serverSecret,
                             label = Res.string.server_secret
                         )
                     }
                 } else {
-                    // TODO: TO REMOVE
-                    LaunchedEffect(key1 = waiting.value){
-                        delay(3000L)
-                        waiting.value = false
-                        // TODO: TO REMOVE GET FROM THE REAL REQUEST RESPONSE
-                        success.value = Random().nextBoolean()
-                        // TODO: IF success = true STORE DATA
-                    }
                     ResponseStatusUI(
-                        isWaiting = waiting,
+                        isWaiting = viewModel.waiting,
                         statusText = Res.string.transferring_data,
-                        isSuccessful = success,
+                        isSuccessful = viewModel.success,
                         successText = Res.string.transfer_executed_successfully,
                         failedText = Res.string.transfer_failed
                     )
@@ -691,13 +716,13 @@ class ProfileScreen: Screen() {
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = Arrangement.End
                 ) {
-                    if(!isExecuting) {
+                    if (!viewModel.isExecuting.value) {
                         TextButton(
                             onClick = { resetLayout.invoke() }
                         ) {
                             Text(
                                 text = stringResource(
-                                    if(isExecuting)
+                                    if (viewModel.isExecuting.value)
                                         Res.string.cancel
                                     else
                                         Res.string.dismiss
@@ -714,16 +739,12 @@ class ProfileScreen: Screen() {
                     } else {
                         TextButton(
                             onClick = {
-                                if(waiting.value) {
-                                    // TODO: STOP THE TRANSFER THEN
-                                    isExecuting = false
-                                } else {
-                                    if(success.value) {
+                                if (viewModel.waiting.value)
+                                    viewModel.isExecuting.value = false
+                                else {
+                                    if (viewModel.success.value) {
                                         resetLayout.invoke()
                                         changeStorage.value = false
-                                        user.storage = if(currentStorageIsLocal)
-                                            Online
-                                        else
                                             Local
                                         navToSplash()
                                     } else
@@ -733,10 +754,10 @@ class ProfileScreen: Screen() {
                         ) {
                             Text(
                                 text = stringResource(
-                                    if(waiting.value)
+                                    if (viewModel.waiting.value)
                                         Res.string.cancel
                                     else {
-                                        if(success.value)
+                                        if (viewModel.success.value)
                                             Res.string.close
                                         else
                                             Res.string.retry

@@ -28,9 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.apimanager.formatters.TimeFormatter
-import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.displayFontFamily
+import com.tecknobit.neutron.viewmodels.addactivities.AddRevenueViewModel
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
@@ -41,7 +42,8 @@ import java.util.Calendar.MINUTE
 import kotlin.collections.ArrayDeque
 
 abstract class AddRevenueSection (
-    val show: MutableState<Boolean>
+    val show: MutableState<Boolean>,
+    open val viewModel: AddRevenueViewModel
 ) {
 
     private val calendar: Calendar = Calendar.getInstance()
@@ -54,19 +56,20 @@ abstract class AddRevenueSection (
 
     protected lateinit var showKeyboard: MutableState<Boolean>
 
-    private lateinit var revenueValue: MutableState<String>
-
     private val digits : ArrayDeque<Int> = ArrayDeque()
 
-    protected lateinit var revenueTitle: MutableState<String>
-
-    protected lateinit var revenueDescription: MutableState<String>
+    protected val snackbarHostState by lazy {
+        SnackbarHostState()
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AddRevenue() {
+        viewModel.setActiveContext(this::class.java)
+        viewModel.revenueValue = remember { mutableStateOf("0") }
+        viewModel.revenueTitle = remember { mutableStateOf("") }
+        viewModel.revenueDescription = remember { mutableStateOf("") }
         showKeyboard = remember { mutableStateOf(true) }
-        revenueValue = remember { mutableStateOf("0") }
         if(show.value) {
             ModalBottomSheet(
                 sheetState = rememberModalBottomSheetState(
@@ -89,7 +92,7 @@ abstract class AddRevenueSection (
                                     start = 32.dp,
                                     end = 32.dp
                                 ),
-                            text = "${revenueValue.value}${user.currency.symbol}",
+                            text = "${viewModel.revenueValue.value}${localUser.currency.symbol}",
                             color = Color.White,
                             fontFamily = displayFontFamily,
                             fontSize = 50.sp,
@@ -169,17 +172,20 @@ abstract class AddRevenueSection (
                                 ActionButton(
                                     action = {
                                         if(digits.isNotEmpty()) {
-                                            if(revenueValue.value.last() == '.')
-                                                revenueValue.value = revenueValue.value.removeSuffix(".")
+                                            if (viewModel.revenueValue.value.last() == '.')
+                                                viewModel.revenueValue.value =
+                                                    viewModel.revenueValue.value.removeSuffix(".")
                                             else {
                                                 val digit = digits.removeLast()
-                                                revenueValue.value = if(revenueValue.value.contains("."))
-                                                    revenueValue.value.removeSuffix(digit.toString())
+                                                viewModel.revenueValue.value =
+                                                    if (viewModel.revenueValue.value.contains("."))
+                                                        viewModel.revenueValue.value.removeSuffix(digit.toString())
                                                 else
-                                                    ((revenueValue.value.toInt() - digit) / 10).toString()
+                                                        ((viewModel.revenueValue.value.toInt() - digit) / 10).toString()
                                             }
-                                        } else if(revenueValue.value.last() == '.')
-                                            revenueValue.value = revenueValue.value.removeSuffix(".")
+                                        } else if (viewModel.revenueValue.value.last() == '.')
+                                            viewModel.revenueValue.value =
+                                                viewModel.revenueValue.value.removeSuffix(".")
                                     },
                                     icon = Icons.AutoMirrored.Filled.Backspace
                                 )
@@ -193,8 +199,8 @@ abstract class AddRevenueSection (
                                 modifier = Modifier
                                     .weight(1f),
                                 onClick = {
-                                    if(!revenueValue.value.contains("."))
-                                        revenueValue.value += "."
+                                    if (!viewModel.revenueValue.value.contains("."))
+                                        viewModel.revenueValue.value += "."
                                 },
                                 text = ".",
                                 fontSize = 50.sp
@@ -210,7 +216,7 @@ abstract class AddRevenueSection (
                                     end = 32.dp
                                 ),
                             onClick = {
-                                if(revenueValue.value != "0")
+                                if (viewModel.revenueValue.value != "0")
                                     showKeyboard.value = !showKeyboard.value
                             },
                             text = Res.string.next
@@ -230,13 +236,13 @@ abstract class AddRevenueSection (
         KeyboardButton(
             modifier = modifier,
             onClick = {
-                revenueValue.value = if(revenueValue.value.contains(".")) {
-                    if(revenueValue.value.split(".")[1].length < 2)
-                        revenueValue.value + number
+                viewModel.revenueValue.value = if (viewModel.revenueValue.value.contains(".")) {
+                    if (viewModel.revenueValue.value.split(".")[1].length < 2)
+                        viewModel.revenueValue.value + number
                     else
-                        revenueValue.value
+                        viewModel.revenueValue.value
                 } else
-                    (revenueValue.value.toInt() * 10 + number).toString()
+                    (viewModel.revenueValue.value.toInt() * 10 + number).toString()
                 digits.add(number)
             },
             text = number.toString()
@@ -446,12 +452,10 @@ abstract class AddRevenueSection (
     }
 
     protected fun navBack() {
-        revenueValue.value = "0"
+        viewModel.revenueValue.value = "0"
         showKeyboard.value = true
-        if(::revenueTitle.isInitialized) {
-            revenueTitle.value = ""
-            revenueDescription.value = ""
-        }
+        viewModel.revenueTitle.value = ""
+        viewModel.revenueDescription.value = ""
         digits.clear()
         show.value = false
     }

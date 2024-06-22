@@ -1,4 +1,4 @@
-package com.tecknobit.neutron.screens.session
+package com.tecknobit.neutron.screens.auth
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -32,7 +32,8 @@ import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronOutlinedTextField
 import com.tecknobit.neutron.ui.displayFontFamily
-import com.tecknobit.neutron.ui.navigator
+import com.tecknobit.neutron.viewmodels.ConnectActivityViewModel
+import com.tecknobit.neutroncore.helpers.InputValidator.*
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -45,27 +46,38 @@ import java.util.*
 
 class ConnectScreen: Screen() {
 
-    private lateinit var isSignUp: MutableState<Boolean>
-
-    private lateinit var storeDataOnline: MutableState<Boolean>
-
-    private lateinit var showQrCodeLogin: MutableState<Boolean>
-
     private var localDatabaseNotExists: Boolean = true
+
+    private val viewModel = ConnectActivityViewModel(
+        snackbarHostState = snackbarHostState
+    )
 
     @Composable
     override fun ShowScreen() {
-        isSignUp = remember { mutableStateOf(true) }
-        storeDataOnline = remember { mutableStateOf(false) }
-        showQrCodeLogin = remember { mutableStateOf(false) }
+        viewModel.isSignUp = remember { mutableStateOf(true) }
+        viewModel.storeDataOnline = remember { mutableStateOf(false) }
+        viewModel.showQrCodeLogin = remember { mutableStateOf(false) }
         localDatabaseNotExists = Random().nextBoolean() // TODO: TO INIT CORRECTLY FETCHING THE DATABASE
+        viewModel.host = remember { mutableStateOf("") }
+        viewModel.hostError = remember { mutableStateOf(false) }
+        viewModel.serverSecret = remember { mutableStateOf("") }
+        viewModel.serverSecretError = remember { mutableStateOf(false) }
+        viewModel.name = remember { mutableStateOf("") }
+        viewModel.nameError = remember { mutableStateOf(false) }
+        viewModel.surname = remember { mutableStateOf("") }
+        viewModel.surnameError = remember { mutableStateOf(false) }
+        viewModel.email = remember { mutableStateOf("") }
+        viewModel.emailError = remember { mutableStateOf(false) }
+        viewModel.password = remember { mutableStateOf("") }
+        viewModel.passwordError = remember { mutableStateOf(false) }
         Scaffold (
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             floatingActionButton = {
                 AnimatedVisibility(
-                    visible = !isSignUp.value && !storeDataOnline.value && localDatabaseNotExists
+                    visible = !viewModel.isSignUp.value && !viewModel.storeDataOnline.value && localDatabaseNotExists
                 ) {
                     FloatingActionButton(
-                        onClick = { showQrCodeLogin.value = true }
+                        onClick = { viewModel.showQrCodeLogin.value = true }
                     ) {
                         Icon(
                             imageVector = Icons.Default.QrCode2,
@@ -105,7 +117,7 @@ class ConnectScreen: Screen() {
                 Column {
                     Text(
                         text = stringResource(
-                            if(isSignUp.value)
+                            if (viewModel.isSignUp.value)
                                 Res.string.hello
                             else
                                 Res.string.welcome_back
@@ -115,7 +127,7 @@ class ConnectScreen: Screen() {
                     )
                     Text(
                         text = stringResource(
-                            if(isSignUp.value)
+                            if (viewModel.isSignUp.value)
                                 Res.string.sign_up
                             else
                                 Res.string.sign_in
@@ -176,12 +188,12 @@ class ConnectScreen: Screen() {
                     horizontalArrangement = Arrangement.spacedBy(5.dp)
                 ) {
                     Switch(
-                        checked = storeDataOnline.value,
-                        onCheckedChange = { storeDataOnline.value = it }
+                        checked = viewModel.storeDataOnline.value,
+                        onCheckedChange = { viewModel.storeDataOnline.value = it }
                     )
                     Text(
                         text = stringResource(
-                            if(isSignUp.value)
+                            if (viewModel.isSignUp.value)
                                 Res.string.store_data_online
                             else
                                 Res.string.stored_data_online
@@ -191,54 +203,61 @@ class ConnectScreen: Screen() {
                 val keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 )
-                val host = remember { mutableStateOf("") }
-                val serverSecret = remember { mutableStateOf("") }
-                val name = remember { mutableStateOf("") }
-                val surname = remember { mutableStateOf("") }
                 AnimatedVisibility(
-                    visible = storeDataOnline.value
+                    visible = viewModel.storeDataOnline.value
                 ) {
                     Column (
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         NeutronOutlinedTextField(
-                            value = host,
+                            value = viewModel.host,
                             label = Res.string.host_address,
-                            keyboardOptions = keyboardOptions
+                            keyboardOptions = keyboardOptions,
+                            errorText = Res.string.host_address_not_valid,
+                            isError = viewModel.hostError,
+                            validator = { isHostValid(it) }
                         )
                         AnimatedVisibility(
-                            visible = isSignUp.value
+                            visible = viewModel.isSignUp.value
                         ) {
                             NeutronOutlinedTextField(
-                                value = serverSecret,
+                                value = viewModel.serverSecret,
                                 label = Res.string.server_secret,
-                                keyboardOptions = keyboardOptions
+                                keyboardOptions = keyboardOptions,
+                                errorText = Res.string.server_secret_not_valid,
+                                isError = viewModel.serverSecretError,
+                                validator = { isServerSecretValid(it) }
                             )
                         }
                     }
                 }
                 AnimatedVisibility(
-                    visible = isSignUp.value
+                    visible = viewModel.isSignUp.value
                 ) {
                     Column (
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         NeutronOutlinedTextField(
-                            value = name,
+                            value = viewModel.name,
                             label = Res.string.name,
-                            keyboardOptions = keyboardOptions
+                            keyboardOptions = keyboardOptions,
+                            errorText = Res.string.name_not_valid,
+                            isError = viewModel.nameError,
+                            validator = { isNameValid(it) }
 
                         )
                         NeutronOutlinedTextField(
-                            value = surname,
+                            value = viewModel.surname,
                             label = Res.string.surname,
-                            keyboardOptions = keyboardOptions
+                            keyboardOptions = keyboardOptions,
+                            errorText = Res.string.surname_not_valid,
+                            isError = viewModel.surnameError,
+                            validator = { isSurnameValid(it) }
                         )
                     }
                 }
-                val email = remember { mutableStateOf("") }
                 AnimatedVisibility(
-                    visible = !isSignUp.value && !storeDataOnline.value && localDatabaseNotExists
+                    visible = !viewModel.isSignUp.value && !viewModel.storeDataOnline.value && localDatabaseNotExists
                 ) {
                     Text(
                         modifier = Modifier
@@ -249,14 +268,16 @@ class ConnectScreen: Screen() {
                     )
                 }
                 NeutronOutlinedTextField(
-                    value = email,
+                    value = viewModel.email,
                     label = Res.string.email,
-                    keyboardOptions = keyboardOptions
+                    keyboardOptions = keyboardOptions,
+                    errorText = Res.string.email_not_valid,
+                    isError = viewModel.emailError,
+                    validator = { isEmailValid(it) }
                 )
-                val password = remember { mutableStateOf("") }
                 var hiddenPassword by remember { mutableStateOf(true) }
                 NeutronOutlinedTextField(
-                    value = password,
+                    value = viewModel.password,
                     label = Res.string.password,
                     trailingIcon = {
                         IconButton(
@@ -277,7 +298,10 @@ class ConnectScreen: Screen() {
                         VisualTransformation.None,
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password
-                    )
+                    ),
+                    errorText = Res.string.password_not_valid,
+                    isError = viewModel.passwordError,
+                    validator = { isPasswordValid(it) }
                 )
                 NeutronButton(
                     modifier = Modifier
@@ -285,11 +309,8 @@ class ConnectScreen: Screen() {
                             top = 10.dp
                         )
                         .width(300.dp),
-                    onClick = {
-                        // TODO: MAKE THE REQUEST THEN
-                        navigator.navigate(HOME_SCREEN)
-                    },
-                    text = if(isSignUp.value)
+                    onClick = { viewModel.auth() },
+                    text = if (viewModel.isSignUp.value)
                         Res.string.sign_up_btn
                     else
                         Res.string.sign_in_btn
@@ -299,7 +320,7 @@ class ConnectScreen: Screen() {
                 ) {
                     Text(
                         text = stringResource(
-                            if(isSignUp.value)
+                            if (viewModel.isSignUp.value)
                                 Res.string.have_an_account
                             else
                                 Res.string.are_you_new_to_neutron
@@ -308,9 +329,9 @@ class ConnectScreen: Screen() {
                     )
                     Text(
                         modifier = Modifier
-                            .clickable { isSignUp.value = !isSignUp.value },
+                            .clickable { viewModel.isSignUp.value = !viewModel.isSignUp.value },
                         text = stringResource(
-                            if(isSignUp.value)
+                            if (viewModel.isSignUp.value)
                                 Res.string.sign_in_btn
                             else
                                 Res.string.sign_up_btn
@@ -328,7 +349,7 @@ class ConnectScreen: Screen() {
     private fun LoginQrCode() {
         val qrCodeHelper = QRCodeHelper()
         val qrcode: InputStream
-        if(showQrCodeLogin.value) {
+        if (viewModel.showQrCodeLogin.value) {
             // TODO: TO CREATE THE SESSION WITH THE SOCKETMANAGER TO PASS IN THE QRCODE DATA
             qrcode = qrCodeHelper.getQRCodeStream(
                 JSONObject().put("data", "real_data"),
@@ -338,7 +359,7 @@ class ConnectScreen: Screen() {
             ModalBottomSheet(
                 onDismissRequest = {
                     qrCodeHelper.deleteQRCode(qrcode)
-                    showQrCodeLogin.value = false
+                    viewModel.showQrCodeLogin.value = false
                 }
             ) {
                 Column (

@@ -10,8 +10,8 @@ import com.tecknobit.neutron.screens.Screen.Companion.CONNECT_SCREEN
 import com.tecknobit.neutron.screens.Screen.Companion.HOME_SCREEN
 import com.tecknobit.neutron.screens.Screen.Companion.PROFILE_SCREEN
 import com.tecknobit.neutron.screens.Screen.Companion.SPLASH_SCREEN
+import com.tecknobit.neutron.screens.auth.ConnectScreen
 import com.tecknobit.neutron.screens.navigation.Splashscreen
-import com.tecknobit.neutron.screens.session.ConnectScreen
 import com.tecknobit.neutron.screens.session.Home
 import com.tecknobit.neutron.screens.session.ProfileScreen
 import com.tecknobit.neutron.screens.session.ProjectRevenueScreen

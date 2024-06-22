@@ -20,7 +20,8 @@ import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.theme.AppTypography
 import com.tecknobit.neutron.ui.theme.primaryLight
-import com.tecknobit.neutroncore.records.User
+import com.tecknobit.neutron.viewmodels.NeutronViewModel.Companion.requester
+import com.tecknobit.neutroncore.helpers.NeutronRequester
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import com.tecknobit.neutroncore.records.revenues.RevenueLabel
 import neutron.composeapp.generated.resources.Res
@@ -33,9 +34,6 @@ import org.jetbrains.compose.resources.stringResource
 class Splashscreen : Screen() {
 
     companion object {
-
-        // TODO: TO INIT CORRECTLY
-        val user = User()
 
         val localUser = DesktopLocalUser()
 
@@ -97,8 +95,17 @@ class Splashscreen : Screen() {
             }
         )
         if(startApp) {
-            // TODO: MAKE THE REAL NAVIGATION
-            navigator.navigate(CONNECT_SCREEN)
+            requester = NeutronRequester(
+                host = localUser.hostAddress,
+                userId = localUser.userId,
+                userToken = localUser.userToken
+            )
+            navigator.navigate(
+                if (localUser.isAuthenticated)
+                    HOME_SCREEN
+                else
+                    CONNECT_SCREEN
+            )
         }
     }
 

@@ -32,14 +32,19 @@ import com.tecknobit.neutron.ui.InsertionLabelBadge
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronTextField
 import com.tecknobit.neutron.ui.displayFontFamily
+import com.tecknobit.neutron.viewmodels.addactivities.AddRevenuesViewModel
+import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueDescriptionValid
+import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueTitleValid
 import com.tecknobit.neutroncore.records.revenues.RevenueLabel
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class AddRevenuesSection(
+    override val viewModel: AddRevenuesViewModel,
     show: MutableState<Boolean>
 ): AddRevenueSection(
+    viewModel = viewModel,
     show = show
 ) {
 
@@ -51,12 +56,12 @@ class AddRevenuesSection(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            revenueTitle = remember { mutableStateOf("") }
-            revenueDescription = remember { mutableStateOf("") }
-            val currentDate = remember { mutableStateOf(formatter.formatAsNowString(dateFormat)) }
+            viewModel.revenueTitleError = remember { mutableStateOf(false) }
+            viewModel.revenueDescriptionError = remember { mutableStateOf(false) }
+            viewModel.currentDate = remember { mutableStateOf(formatter.formatAsNowString(dateFormat)) }
+            viewModel.currentTime = remember { mutableStateOf(formatter.formatAsNowString(timeFormat)) }
             val displayDatePickerDialog = remember { mutableStateOf(false) }
             val dateState = rememberDatePickerState(initialSelectedDateMillis = System.currentTimeMillis())
-            val currentTime = remember { mutableStateOf(formatter.formatAsNowString(timeFormat)) }
             val displayTimePickerDialog = remember { mutableStateOf(false) }
             val timePickerState = getTimePickerState()
             Column (
@@ -114,8 +119,11 @@ class AddRevenuesSection(
                 NeutronTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    value = revenueTitle,
-                    label = Res.string.title
+                    value = viewModel.revenueTitle,
+                    label = Res.string.title,
+                    errorText = Res.string.title_not_valid,
+                    isError = viewModel.revenueTitleError,
+                    validator = { isRevenueTitleValid(it) }
                 )
                 if(!isProjectRevenue) {
                     NeutronTextField(
@@ -124,26 +132,34 @@ class AddRevenuesSection(
                             .heightIn(
                                 max = 250.dp
                             ),
-                        value = revenueDescription,
+                        value = viewModel.revenueDescription,
                         label = Res.string.description,
-                        isTextArea = true
+                        isTextArea = true,
+                        errorText = Res.string.description_not_valid,
+                        isError = viewModel.revenueDescriptionError,
+                        validator = { isRevenueDescriptionValid(it) }
                     )
-                    Labels()
+                    viewModel.labels = remember { mutableStateListOf() }
+                    Labels(
+                        labels = viewModel.labels
+                    )
                 }
                 TimeInfoSection(
                     dateTitle = Res.string.insertion_date,
-                    date = currentDate,
+                    date = viewModel.currentDate,
                     displayDatePickerDialog = displayDatePickerDialog,
                     dateState = dateState,
                     timeTitle = Res.string.insertion_time,
-                    time = currentTime,
+                    time = viewModel.currentTime,
                     displayTimePickerDialog = displayTimePickerDialog,
                     timePickerState = timePickerState
                 )
                 NeutronButton(
                     onClick = {
-                        // TODO: MAKE THE REQUEST THEN
-                        navBack()
+                        viewModel.createRevenue(
+                            isProject = isProjectRevenue,
+                            onSuccess = { navBack() }
+                        )
                     },
                     text = if(isProjectRevenue)
                         Res.string.add_project
@@ -156,8 +172,9 @@ class AddRevenuesSection(
 
     @OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
     @Composable
-    private fun Labels() {
-        val labels = remember { mutableStateListOf<RevenueLabel>() }
+    private fun Labels(
+        labels: SnapshotStateList<RevenueLabel>
+    ) {
         Column (
             modifier = Modifier
                 .fillMaxWidth()

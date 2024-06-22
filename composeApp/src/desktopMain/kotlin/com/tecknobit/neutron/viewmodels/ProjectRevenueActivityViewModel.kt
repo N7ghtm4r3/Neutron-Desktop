@@ -24,16 +24,10 @@ class ProjectRevenueActivityViewModel(
     lateinit var showDeleteProject: MutableState<Boolean>
 
     override fun restartRefresher() {
-        getProjectRevenue()
+        refreshProjectRevenue()
     }
 
-    fun setInitialProjectRevenue(
-        projectRevenue: ProjectRevenue
-    ) {
-        _projectRevenue.value = projectRevenue
-    }
-
-    fun getProjectRevenue() {
+    fun refreshProjectRevenue() {
         execRefreshingRoutine(
             currentContext = ProjectRevenueScreen::class.java,
             routine = {
@@ -48,8 +42,7 @@ class ProjectRevenueActivityViewModel(
                     },
                     onFailure = { showSnack(it) }
                 )
-            },
-            repeatRoutine = true
+            }
         )
     }
 
@@ -60,7 +53,7 @@ class ProjectRevenueActivityViewModel(
         requester.sendRequest(
             request = {
                 requester.closeProjectRevenueTicket(
-                    projectRevenue = projectRevenue.value,
+                    projectRevenue = _projectRevenue.value,
                     ticket = ticket
                 )
             },
@@ -80,7 +73,7 @@ class ProjectRevenueActivityViewModel(
         requester.sendRequest(
             request = {
                 requester.deleteProjectRevenueTicket(
-                    projectRevenue = projectRevenue.value,
+                    projectRevenue = _projectRevenue.value,
                     ticket = ticket
                 )
             },

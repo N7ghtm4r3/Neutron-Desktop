@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.equinox.Requester
-import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.ui.theme.errorContainerDark
 import com.tecknobit.neutron.viewmodels.NeutronViewModel.Companion.requester
 import com.tecknobit.neutroncore.records.revenues.*
@@ -52,7 +52,7 @@ lateinit var PROJECT_LABEL: RevenueLabel
 @Composable
 fun DisplayRevenues(
     snackbarHostState: SnackbarHostState,
-    revenues: SnapshotStateList<Revenue>,
+    revenues: MutableList<Revenue>,
     navToProject: (Revenue) -> Unit
 ) {
     if(revenues.isNotEmpty()) {
@@ -209,7 +209,6 @@ fun GeneralRevenue(
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
                     .padding(
                         start = 16.dp,
                         end = 16.dp,
@@ -281,7 +280,7 @@ fun RevenueInfo(
                 text = stringResource(Res.string.revenue)
             )
             Text(
-                text = "${revenue.value}${user.currency.symbol}",
+                text = "${revenue.value}${localUser.currency.symbol}",
                 fontFamily = displayFontFamily
             )
         }

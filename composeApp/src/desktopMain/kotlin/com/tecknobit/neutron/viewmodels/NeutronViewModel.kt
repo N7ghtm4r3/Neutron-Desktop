@@ -75,7 +75,7 @@ open class NeutronViewModel(
     fun setActiveContext(
         context: Class<*>
     ) {
-        activeContext = context::class.java
+        activeContext = context
     }
 
 }

@@ -16,7 +16,10 @@ public class DesktopLocalUser extends LocalUser {
 
     @Override
     protected void setPreference(String key, String value) {
-        preferences.put(key, value);
+        if (value == null)
+            preferences.remove(key);
+        else
+            preferences.put(key, value);
     }
 
     @Override

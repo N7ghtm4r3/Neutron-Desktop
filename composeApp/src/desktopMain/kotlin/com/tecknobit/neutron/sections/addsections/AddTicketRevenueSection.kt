@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronTextField
+import com.tecknobit.neutron.viewmodels.addactivities.AddTicketViewModel
+import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueDescriptionValid
+import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueTitleValid
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import neutron.composeapp.generated.resources.*
 import neutron.composeapp.generated.resources.Res.string
@@ -22,9 +25,11 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class AddTicketRevenueSection(
+    override val viewModel: AddTicketViewModel,
     show: MutableState<Boolean>,
-    projectRevenue: ProjectRevenue
+    val projectRevenue: ProjectRevenue
 ) : AddRevenueSection(
+    viewModel = viewModel,
     show = show
 ){
 
@@ -36,11 +41,20 @@ class AddTicketRevenueSection(
             enter = fadeIn(),
             exit = fadeOut()
         ) {
-            revenueTitle = remember { mutableStateOf("") }
-            revenueDescription = remember { mutableStateOf("") }
+            viewModel.revenueTitle = remember { mutableStateOf("") }
+            viewModel.revenueDescription = remember { mutableStateOf("") }
+            viewModel.revenueTitleError = remember { mutableStateOf(false) }
+            viewModel.revenueDescription = remember { mutableStateOf("") }
+            viewModel.revenueDescriptionError = remember { mutableStateOf(false) }
             var isClosed by remember { mutableStateOf(false) }
-            val currentOpeningDate = remember { mutableStateOf(formatter.formatAsNowString(dateFormat)) }
-            val currentClosingDate = remember { mutableStateOf(formatter.formatAsNowString(dateFormat)) }
+            viewModel.currentOpeningDate =
+                remember { mutableStateOf(formatter.formatAsNowString(dateFormat)) }
+            viewModel.currentClosingDate =
+                remember { mutableStateOf(formatter.formatAsNowString(dateFormat)) }
+            viewModel.currentOpeningTime =
+                remember { mutableStateOf(formatter.formatAsNowString(timeFormat)) }
+            viewModel.currentClosingTime =
+                remember { mutableStateOf(formatter.formatAsNowString(timeFormat)) }
             val displayDatePickerDialog = remember { mutableStateOf(false) }
             val dateState = rememberDatePickerState(
                 initialSelectedDateMillis = System.currentTimeMillis(),
@@ -48,7 +62,7 @@ class AddTicketRevenueSection(
                     object : SelectableDates {
                         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
                             return utcTimeMillis <= formatter.formatAsTimestamp(
-                                currentClosingDate.value,
+                                viewModel.currentClosingDate.value,
                                 dateFormat
                             )
                         }
@@ -65,7 +79,7 @@ class AddTicketRevenueSection(
                 selectableDates = object : SelectableDates {
                     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
                         return utcTimeMillis >= formatter.formatAsTimestamp(
-                            currentOpeningDate.value,
+                            viewModel.currentOpeningDate.value,
                             dateFormat
                         )
                     }
@@ -104,8 +118,11 @@ class AddTicketRevenueSection(
                 NeutronTextField(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    value = revenueTitle,
-                    label = string.title
+                    value = viewModel.revenueTitle,
+                    label = string.title,
+                    errorText = string.title_not_valid,
+                    isError = viewModel.revenueTitleError,
+                    validator = { isRevenueTitleValid(it) }
                 )
                 NeutronTextField(
                     modifier = Modifier
@@ -113,13 +130,16 @@ class AddTicketRevenueSection(
                         .heightIn(
                             max = 250.dp
                         ),
-                    value = revenueDescription,
+                    value = viewModel.revenueDescription,
                     label = string.description,
-                    isTextArea = true
+                    isTextArea = true,
+                    errorText = string.description_not_valid,
+                    isError = viewModel.revenueDescriptionError,
+                    validator = { isRevenueDescriptionValid(it) }
                 )
                 TimeInfoSection(
                     dateTitle = string.opening_date_title,
-                    date = currentOpeningDate,
+                    date = viewModel.currentOpeningDate,
                     displayDatePickerDialog = displayDatePickerDialog,
                     dateState = dateState,
                     timeTitle = string.opening_time,
@@ -130,7 +150,7 @@ class AddTicketRevenueSection(
                 if(isClosed) {
                     TimeInfoSection(
                         dateTitle = string.closing_date_title,
-                        date = currentClosingDate,
+                        date = viewModel.currentClosingDate,
                         displayDatePickerDialog = displayClosingDatePickerDialog,
                         dateState = dateClosingState,
                         timeTitle = string.closing_time,
@@ -141,8 +161,11 @@ class AddTicketRevenueSection(
                 }
                 NeutronButton(
                     onClick = {
-                        // TODO: MAKE THE REQUEST THEN
-                        navBack()
+                        viewModel.addTicket(
+                            projectRevenue = projectRevenue,
+                            isClosed = isClosed,
+                            onSuccess = { navBack() }
+                        )
                     },
                     text = string.add_ticket
                 )
