@@ -31,6 +31,7 @@ import com.tecknobit.apimanager.formatters.TimeFormatter
 import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.displayFontFamily
+import com.tecknobit.neutron.viewmodels.NeutronViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddRevenueViewModel
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -43,6 +44,8 @@ import kotlin.collections.ArrayDeque
 
 abstract class AddRevenueSection (
     val show: MutableState<Boolean>,
+    val startContext: Class<*>,
+    val mainViewModel: NeutronViewModel,
     open val viewModel: AddRevenueViewModel
 ) {
 
@@ -65,12 +68,13 @@ abstract class AddRevenueSection (
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AddRevenue() {
-        viewModel.setActiveContext(this::class.java)
         viewModel.revenueValue = remember { mutableStateOf("0") }
         viewModel.revenueTitle = remember { mutableStateOf("") }
         viewModel.revenueDescription = remember { mutableStateOf("") }
         showKeyboard = remember { mutableStateOf(true) }
         if(show.value) {
+            viewModel.setActiveContext(this::class.java)
+            mainViewModel.suspendRefresher()
             ModalBottomSheet(
                 sheetState = rememberModalBottomSheetState(
                     skipPartiallyExpanded = true
@@ -116,6 +120,9 @@ abstract class AddRevenueSection (
                     }
                 }
             }
+        } else {
+            mainViewModel.setActiveContext(startContext)
+            mainViewModel.restartRefresher()
         }
     }
 

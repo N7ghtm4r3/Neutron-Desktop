@@ -12,7 +12,7 @@ import com.tecknobit.neutroncore.records.User.UserStorage.Online
 import com.tecknobit.neutroncore.records.revenues.Revenue
 import java.io.File
 
-class ProfileActivityViewModel(
+class ProfileViewModel(
     snackbarHostState: SnackbarHostState
 ) : NeutronViewModel(
     snackbarHostState = snackbarHostState

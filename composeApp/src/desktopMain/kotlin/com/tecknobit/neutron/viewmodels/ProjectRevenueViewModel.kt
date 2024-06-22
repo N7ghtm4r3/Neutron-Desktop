@@ -9,7 +9,7 @@ import com.tecknobit.neutroncore.records.revenues.TicketRevenue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class ProjectRevenueActivityViewModel(
+class ProjectRevenueViewModel(
     snackbarHostState: SnackbarHostState,
     initialProjectRevenue: ProjectRevenue
 ) : NeutronViewModel(

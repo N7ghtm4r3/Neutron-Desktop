@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronTextField
+import com.tecknobit.neutron.viewmodels.ProjectRevenueViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddTicketViewModel
 import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueDescriptionValid
 import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueTitleValid
@@ -25,12 +26,16 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class AddTicketRevenueSection(
-    override val viewModel: AddTicketViewModel,
     show: MutableState<Boolean>,
+    startContext: Class<*>,
+    mainViewModel: ProjectRevenueViewModel,
+    override val viewModel: AddTicketViewModel,
     val projectRevenue: ProjectRevenue
 ) : AddRevenueSection(
-    viewModel = viewModel,
-    show = show
+    show = show,
+    startContext = startContext,
+    mainViewModel = mainViewModel,
+    viewModel = viewModel
 ){
 
     @OptIn(ExperimentalMaterial3Api::class)

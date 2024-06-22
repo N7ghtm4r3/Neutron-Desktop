@@ -32,7 +32,7 @@ import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronOutlinedTextField
 import com.tecknobit.neutron.ui.displayFontFamily
-import com.tecknobit.neutron.viewmodels.ConnectActivityViewModel
+import com.tecknobit.neutron.viewmodels.ConnectViewModel
 import com.tecknobit.neutroncore.helpers.InputValidator.*
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -48,7 +48,7 @@ class ConnectScreen: Screen() {
 
     private var localDatabaseNotExists: Boolean = true
 
-    private val viewModel = ConnectActivityViewModel(
+    private val viewModel = ConnectViewModel(
         snackbarHostState = snackbarHostState
     )
 

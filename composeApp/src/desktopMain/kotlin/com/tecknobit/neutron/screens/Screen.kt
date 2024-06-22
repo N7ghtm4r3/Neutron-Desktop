@@ -18,7 +18,7 @@ abstract class Screen {
 
         const val HOME_SCREEN = "home"
 
-        const val PROJECT_REVENUE_SCREEN = "project_revenue/"
+        const val PROJECT_REVENUE_SCREEN = "project_revenue"
 
         const val PROFILE_SCREEN = "profile"
 

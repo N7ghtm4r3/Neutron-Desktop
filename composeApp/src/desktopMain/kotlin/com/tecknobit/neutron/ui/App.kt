@@ -9,6 +9,7 @@ import coil3.request.CachePolicy
 import com.tecknobit.neutron.screens.Screen.Companion.CONNECT_SCREEN
 import com.tecknobit.neutron.screens.Screen.Companion.HOME_SCREEN
 import com.tecknobit.neutron.screens.Screen.Companion.PROFILE_SCREEN
+import com.tecknobit.neutron.screens.Screen.Companion.PROJECT_REVENUE_SCREEN
 import com.tecknobit.neutron.screens.Screen.Companion.SPLASH_SCREEN
 import com.tecknobit.neutron.screens.auth.ConnectScreen
 import com.tecknobit.neutron.screens.navigation.Splashscreen
@@ -16,7 +17,6 @@ import com.tecknobit.neutron.screens.session.Home
 import com.tecknobit.neutron.screens.session.ProfileScreen
 import com.tecknobit.neutron.screens.session.ProjectRevenueScreen
 import com.tecknobit.neutron.ui.theme.NeutronTheme
-import com.tecknobit.neutroncore.records.NeutronItem.IDENTIFIER_KEY
 import moe.tlaster.precompose.PreComposeApp
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.Navigator
@@ -95,12 +95,10 @@ fun App() {
                 }
             }
             scene(
-                route = "project_revenue/{$IDENTIFIER_KEY}"
-            ) { backstackEntry ->
+                route = PROJECT_REVENUE_SCREEN
+            ) {
                 NeutronTheme {
-                    ProjectRevenueScreen(
-                        projectRevenueId = backstackEntry.pathMap[IDENTIFIER_KEY]
-                    ).ShowScreen()
+                    ProjectRevenueScreen().ShowScreen()
                 }
             }
             scene(

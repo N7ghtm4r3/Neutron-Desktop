@@ -29,7 +29,7 @@ import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.theme.NeutronTheme
 import com.tecknobit.neutron.ui.theme.errorLight
-import com.tecknobit.neutron.viewmodels.ProfileActivityViewModel
+import com.tecknobit.neutron.viewmodels.ProfileViewModel
 import com.tecknobit.neutroncore.helpers.InputValidator.*
 import com.tecknobit.neutroncore.records.User.ApplicationTheme
 import com.tecknobit.neutroncore.records.User.ApplicationTheme.*
@@ -50,7 +50,7 @@ class ProfileScreen: Screen() {
 
     private val currentStorageIsLocal = localUser.storage == Local
 
-    private val viewModel = ProfileActivityViewModel(
+    private val viewModel = ProfileViewModel(
         snackbarHostState = snackbarHostState
     )
 

@@ -8,7 +8,7 @@ import com.tecknobit.neutroncore.records.revenues.Revenue.returnRevenues
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class MainActivityViewModel(
+class HomeViewModel(
     snackbarHostState: SnackbarHostState
 ) : NeutronViewModel(
     snackbarHostState = snackbarHostState
@@ -16,6 +16,10 @@ class MainActivityViewModel(
 
     private val _revenues = MutableStateFlow<MutableList<Revenue>>(mutableListOf())
     val revenues: StateFlow<MutableList<Revenue>> = _revenues
+
+    override fun restartRefresher() {
+        getRevenuesList()
+    }
 
     fun getRevenuesList() {
         if (workInLocal()) {

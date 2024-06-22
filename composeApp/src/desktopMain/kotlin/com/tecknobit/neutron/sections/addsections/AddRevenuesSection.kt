@@ -32,6 +32,7 @@ import com.tecknobit.neutron.ui.InsertionLabelBadge
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronTextField
 import com.tecknobit.neutron.ui.displayFontFamily
+import com.tecknobit.neutron.viewmodels.HomeViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddRevenuesViewModel
 import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueDescriptionValid
 import com.tecknobit.neutroncore.helpers.InputValidator.isRevenueTitleValid
@@ -41,11 +42,15 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
 class AddRevenuesSection(
-    override val viewModel: AddRevenuesViewModel,
-    show: MutableState<Boolean>
+    show: MutableState<Boolean>,
+    startContext: Class<*>,
+    mainViewModel: HomeViewModel,
+    override val viewModel: AddRevenuesViewModel
 ): AddRevenueSection(
+    show = show,
+    startContext = startContext,
+    mainViewModel = mainViewModel,
     viewModel = viewModel,
-    show = show
 ) {
 
     @OptIn(ExperimentalMaterial3Api::class)

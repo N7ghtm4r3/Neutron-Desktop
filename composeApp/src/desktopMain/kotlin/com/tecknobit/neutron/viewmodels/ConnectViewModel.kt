@@ -11,7 +11,7 @@ import com.tecknobit.neutroncore.helpers.Endpoints.BASE_ENDPOINT
 import com.tecknobit.neutroncore.helpers.InputValidator.*
 import com.tecknobit.neutroncore.records.User.*
 
-class ConnectActivityViewModel(
+class ConnectViewModel(
     snackbarHostState: SnackbarHostState
 ) : NeutronViewModel(
     snackbarHostState = snackbarHostState

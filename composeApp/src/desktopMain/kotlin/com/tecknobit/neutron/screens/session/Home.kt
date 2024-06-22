@@ -16,7 +16,7 @@ import com.tecknobit.neutron.ui.DisplayRevenues
 import com.tecknobit.neutron.ui.bodyFontFamily
 import com.tecknobit.neutron.ui.getWalletBalance
 import com.tecknobit.neutron.ui.navigator
-import com.tecknobit.neutron.viewmodels.MainActivityViewModel
+import com.tecknobit.neutron.viewmodels.HomeViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddRevenuesViewModel
 import com.tecknobit.neutroncore.records.revenues.Revenue
 import neutron.composeapp.generated.resources.Res
@@ -35,9 +35,11 @@ class Home: Screen() {
 
     private lateinit var addRevenue: MutableState<Boolean>
 
-    private val viewModel = MainActivityViewModel(
+    private val viewModel = HomeViewModel(
         snackbarHostState = snackbarHostState
     )
+
+    private lateinit var addRevenuesViewModel: AddRevenuesViewModel
 
     @OptIn(ExperimentalResourceApi::class)
     @Composable
@@ -50,7 +52,10 @@ class Home: Screen() {
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = { addRevenue.value = true }
+                    onClick = {
+                        viewModel.suspendRefresher()
+                        addRevenue.value = true
+                    }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -120,9 +125,8 @@ class Home: Screen() {
                         snackbarHostState = snackbarHostState,
                         revenues = revenues.value!!,
                         navToProject = { revenue ->
-                            navigator.navigate(
-                                route = PROJECT_REVENUE_SCREEN + revenue.id
-                            )
+                            ProjectRevenueScreen.projectRevenueId = revenue.id
+                            navigator.navigate(PROJECT_REVENUE_SCREEN)
                         }
                     )
                 }
@@ -132,13 +136,17 @@ class Home: Screen() {
 
     @Composable
     private fun AddRevenue() {
-        val addRevenuesViewModel = AddRevenuesViewModel(
-            snackbarHostState = snackbarHostState
-        )
-        AddRevenuesSection(
-            viewModel = addRevenuesViewModel,
-            show = addRevenue
-        ).AddRevenue()
+        if (::addRevenuesViewModel.isInitialized.not()) {
+            addRevenuesViewModel = AddRevenuesViewModel(
+                snackbarHostState = snackbarHostState
+            )
+            AddRevenuesSection(
+                startContext = this::class.java,
+                mainViewModel = viewModel,
+                show = addRevenue,
+                viewModel = addRevenuesViewModel
+            ).AddRevenue()
+        }
     }
 
 }

@@ -21,7 +21,7 @@ import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.screens.session.Home.Companion.revenues
 import com.tecknobit.neutron.sections.addsections.AddTicketRevenueSection
 import com.tecknobit.neutron.ui.*
-import com.tecknobit.neutron.viewmodels.ProjectRevenueActivityViewModel
+import com.tecknobit.neutron.viewmodels.ProjectRevenueViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddTicketViewModel
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import neutron.composeapp.generated.resources.Res
@@ -31,23 +31,25 @@ import neutron.composeapp.generated.resources.total_revenues
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
-class ProjectRevenueScreen(
-    val projectRevenueId: String?
-): Screen() {
+class ProjectRevenueScreen : Screen() {
+
+    companion object {
+        var projectRevenueId: String? = null
+    }
 
     private lateinit var projectRevenue: State<ProjectRevenue>
 
-    private lateinit var viewModel: ProjectRevenueActivityViewModel
+    private lateinit var viewModel: ProjectRevenueViewModel
 
     private lateinit var addTicket: MutableState<Boolean>
 
     @Composable
     override fun ShowScreen() {
         if(projectRevenueId != null) {
-            val currentProjectRevenue = revenues.value!!.getProjectRevenue(projectRevenueId)
+            val currentProjectRevenue = revenues.value!!.getProjectRevenue(projectRevenueId!!)
             addTicket = remember { mutableStateOf(false) }
             if(currentProjectRevenue != null) {
-                viewModel = ProjectRevenueActivityViewModel(
+                viewModel = ProjectRevenueViewModel(
                     snackbarHostState = snackbarHostState,
                     initialProjectRevenue = currentProjectRevenue
                 )
@@ -59,7 +61,10 @@ class ProjectRevenueScreen(
                     snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = { addTicket.value = true }
+                            onClick = {
+                                viewModel.suspendRefresher()
+                                addTicket.value = true
+                            }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Add,
@@ -152,6 +157,10 @@ class ProjectRevenueScreen(
             viewModel.suspendRefresher()
         NeutronAlertDialog(
             icon = Icons.Default.Delete,
+            onDismissAction = {
+                viewModel.showDeleteProject.value = false
+                viewModel.restartRefresher()
+            },
             show = viewModel.showDeleteProject,
             title = Res.string.delete_project,
             text = Res.string.delete_project_warn_text,
@@ -169,9 +178,11 @@ class ProjectRevenueScreen(
             snackbarHostState = snackbarHostState
         )
         AddTicketRevenueSection(
+            startContext = this::class.java,
+            mainViewModel = viewModel,
             show = addTicket,
-            projectRevenue = projectRevenue.value,
-            viewModel = ticketViewModel
+            viewModel = ticketViewModel,
+            projectRevenue = projectRevenue.value
         ).AddRevenue()
     }
 
