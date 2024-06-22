@@ -8,14 +8,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.tecknobit.apimanager.trading.TradingTools.textualizeAssetPercent
 import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.sections.addsections.AddRevenuesSection
-import com.tecknobit.neutron.ui.DisplayRevenues
-import com.tecknobit.neutron.ui.bodyFontFamily
-import com.tecknobit.neutron.ui.getWalletBalance
-import com.tecknobit.neutron.ui.navigator
+import com.tecknobit.neutron.ui.*
 import com.tecknobit.neutron.viewmodels.HomeViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddRevenuesViewModel
 import com.tecknobit.neutroncore.records.revenues.Revenue
@@ -46,8 +42,6 @@ class Home: Screen() {
     override fun ShowScreen() {
         viewModel.setActiveContext(this::class.java)
         addRevenue = remember { mutableStateOf(false) }
-        // TODO: USE THE REAL DATA
-        val walletTrendPercent by remember { mutableDoubleStateOf(1.0) }
         Scaffold (
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             floatingActionButton = {
@@ -81,10 +75,12 @@ class Home: Screen() {
                             fontFamily = bodyFontFamily,
                             fontSize = 45.sp
                         )
-                        Text(
-                            text = "${textualizeAssetPercent(walletTrendPercent)}/"
-                                    + stringResource(Res.string.last_month)
-                        )
+                        val walletTrend = revenues.value!!.getWalletTrend()
+                        if(walletTrend != null) {
+                            Text(
+                                text = "$walletTrend/" + stringResource(Res.string.last_month)
+                            )
+                        }
                     }
                     Column (
                         modifier = Modifier
