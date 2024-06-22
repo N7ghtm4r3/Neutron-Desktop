@@ -1,4 +1,4 @@
-package com.tecknobit.neutron.ui.screens.navigation
+package com.tecknobit.neutron.screens.navigation
 
 import UpdaterDialog
 import androidx.compose.foundation.background
@@ -13,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.neutron.helpers.DesktopLocalUser
+import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.ui.PROJECT_LABEL
 import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutron.ui.navigator
-import com.tecknobit.neutron.ui.screens.Screen
 import com.tecknobit.neutron.ui.theme.AppTypography
 import com.tecknobit.neutron.ui.theme.primaryLight
 import com.tecknobit.neutroncore.records.User
@@ -35,6 +36,8 @@ class Splashscreen : Screen() {
 
         // TODO: TO INIT CORRECTLY
         val user = User()
+
+        val localUser = DesktopLocalUser()
 
     }
 

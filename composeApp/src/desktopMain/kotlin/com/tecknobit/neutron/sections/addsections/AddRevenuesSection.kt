@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalResourceApi::class)
 
-package com.tecknobit.neutron.ui.sections.addsections
+package com.tecknobit.neutron.sections.addsections
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

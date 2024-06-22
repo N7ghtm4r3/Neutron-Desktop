@@ -1,4 +1,4 @@
-package com.tecknobit.neutron.ui.screens.session
+package com.tecknobit.neutron.screens.session
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -23,10 +23,10 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.tecknobit.apimanager.trading.TradingTools.textualizeAssetPercent
+import com.tecknobit.neutron.screens.Screen
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutron.sections.addsections.AddRevenuesSection
 import com.tecknobit.neutron.ui.*
-import com.tecknobit.neutron.ui.screens.Screen
-import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
-import com.tecknobit.neutron.ui.sections.addsections.AddRevenuesSection
 import com.tecknobit.neutroncore.records.revenues.*
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.earnings

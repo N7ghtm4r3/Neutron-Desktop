@@ -30,15 +30,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.equinox.Requester
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutron.ui.theme.errorContainerDark
+import com.tecknobit.neutron.viewmodels.NeutronViewModel.Companion.requester
 import com.tecknobit.neutroncore.records.revenues.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 lateinit var PROJECT_LABEL: RevenueLabel
@@ -46,13 +51,25 @@ lateinit var PROJECT_LABEL: RevenueLabel
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DisplayRevenues(
+    snackbarHostState: SnackbarHostState,
     revenues: SnapshotStateList<Revenue>,
     navToProject: (Revenue) -> Unit
 ) {
     if(revenues.isNotEmpty()) {
         val onDelete: (Revenue) -> Unit = { revenue ->
-            // TODO: MAKE REQUEST THEN
-            revenues.remove(revenue)
+            requester.sendRequest(
+                request = {
+                    requester.deleteRevenue(
+                        revenue = revenue
+                    )
+                },
+                onSuccess = {},
+                onFailure = { helper ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        snackbarHostState.showSnackbar(helper.getString(Requester.RESPONSE_MESSAGE_KEY))
+                    }
+                }
+            )
         }
         LazyColumn (
             modifier = Modifier
@@ -102,7 +119,7 @@ fun GeneralRevenue(
     revenue: Revenue
 ) {
     var descriptionDisplayed by remember { mutableStateOf(false) }
-    val isInitialRevenue = revenue.title == InitialRevenue.INITIAL_REVENUE_KEY
+    val isInitialRevenue = revenue.title == null
     Column {
         ListItem(
             headlineContent = {
@@ -122,44 +139,49 @@ fun GeneralRevenue(
             trailingContent = {
                 if(!isInitialRevenue) {
                     Column {
-                        LazyRow (
-                            horizontalArrangement = Arrangement.spacedBy(5.dp)
-                        ) {
-                            items(
-                                items = (revenue as GeneralRevenue).labels,
-                                key = { it.id }
-                            ) { label ->
-                                val badge = @Composable {
+                        if (revenue is TicketRevenue) {
+                            val coroutine = rememberCoroutineScope()
+                            val state = rememberTooltipState()
+                            TooltipBox(
+                                modifier = Modifier
+                                    .clickable {
+                                        coroutine.launch {
+                                            state.show(MutatePriority.Default)
+                                        }
+                                    },
+                                positionProvider = TooltipDefaults
+                                    .rememberPlainTooltipPositionProvider(),
+                                tooltip = {
+                                    Text(
+                                        text = if (revenue.isClosed)
+                                            "Closed"
+                                        else
+                                            "Pending"
+                                    )
+                                },
+                                state = state
+                            ) {
+                                LabelBadge(
+                                    label = revenue.currentLabel
+                                )
+                            }
+                        } else {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(5.dp)
+                            ) {
+                                items(
+                                    items = (revenue as GeneralRevenue).labels,
+                                    key = {
+                                        if (it.id != null)
+                                            it.id
+                                        else
+                                            UUID.randomUUID()
+                                    }
+                                ) { label ->
                                     LabelBadge(
                                         label = label
                                     )
                                 }
-                                val coroutine = rememberCoroutineScope()
-                                if(revenue is TicketRevenue) {
-                                    val state = rememberTooltipState()
-                                    TooltipBox(
-                                        modifier = Modifier
-                                            .clickable {
-                                                coroutine.launch {
-                                                    state.show(MutatePriority.Default)
-                                                }
-                                            },
-                                        positionProvider = TooltipDefaults
-                                            .rememberPlainTooltipPositionProvider(),
-                                        tooltip = {
-                                            Text(
-                                                text = if(revenue.isClosed)
-                                                    "Closed"
-                                                else
-                                                    "Pending"
-                                            )
-                                        },
-                                        state = state
-                                    ) {
-                                        badge.invoke()
-                                    }
-                                } else
-                                    badge.invoke()
                             }
                         }
                         IconButton(
@@ -184,19 +206,18 @@ fun GeneralRevenue(
         AnimatedVisibility(
             visible = descriptionDisplayed
         ) {
-            Surface {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 16.dp,
-                            end = 16.dp,
-                            bottom = 16.dp
-                        ),
-                    text = (revenue as GeneralRevenue).description,
-                    textAlign = TextAlign.Justify
-                )
-            }
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surface)
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        bottom = 16.dp
+                    ),
+                text = (revenue as GeneralRevenue).description,
+                textAlign = TextAlign.Justify
+            )
         }
     }
     if(isInitialRevenue)
@@ -336,56 +357,6 @@ fun LabelBadge(
     }
 }
 
-//TODO: TO IMPORT IN ANDROID
-@OptIn(ExperimentalResourceApi::class)
-@Composable
-fun DisplayTickets(
-    projectRevenue: MutableState<ProjectRevenue>
-) {
-    val tickets = projectRevenue.value.tickets.toMutableStateList()
-    if(tickets.isNotEmpty()) {
-        LazyColumn {
-            item {
-                GeneralRevenue(
-                    revenue = projectRevenue.value.initialRevenue
-                )
-            }
-            items(
-                key = { ticket -> ticket.id },
-                items = tickets
-            ) { ticket ->
-                SwipeToDeleteContainer(
-                    item = ticket,
-                    onRight = if(!ticket.isClosed) {
-                        {
-                            // TODO: MAKE REQUEST THEN
-                            ticket.isClosed = true
-                        }
-                    } else
-                        null,
-                    onDelete = {
-                        // TODO: MAKE REQUEST THEN
-                        tickets.remove(ticket)
-                    }
-                ) {
-                    GeneralRevenue(
-                        revenue = ticket
-                    )
-                }
-                HorizontalDivider()
-            }
-        }
-    } else {
-        GeneralRevenue(
-            revenue = projectRevenue.value.initialRevenue
-        )
-        EmptyListUI(
-            icon = Icons.AutoMirrored.Filled.StickyNote2,
-            subText = Res.string.no_tickets_yet
-        )
-    }
-}
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InsertionLabelBadge(
@@ -436,6 +407,55 @@ fun InsertionLabelBadge(
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class)
+@Composable
+fun DisplayTickets(
+    projectRevenue: ProjectRevenue,
+    onRight: (TicketRevenue) -> Unit,
+    onDelete: (TicketRevenue) -> Unit
+) {
+    val tickets = projectRevenue.tickets.toMutableStateList()
+    if (tickets.isNotEmpty()) {
+        LazyColumn {
+            item {
+                GeneralRevenue(
+                    revenue = projectRevenue.initialRevenue
+                )
+            }
+            items(
+                key = { ticket -> ticket.id },
+                items = tickets
+            ) { ticket ->
+                SwipeToDeleteContainer(
+                    item = ticket,
+                    onRight = if (!ticket.isClosed) {
+                        {
+                            onRight.invoke(ticket)
+                        }
+                    } else
+                        null,
+                    onDelete = {
+                        onDelete.invoke(ticket)
+                    }
+                ) {
+                    GeneralRevenue(
+                        revenue = ticket
+                    )
+                }
+                HorizontalDivider()
+            }
+        }
+    } else {
+        GeneralRevenue(
+            revenue = projectRevenue.initialRevenue
+        )
+        EmptyListUI(
+            icon = Icons.AutoMirrored.Filled.StickyNote2,
+            subText = Res.string.no_tickets_yet
+        )
     }
 }
 
@@ -626,7 +646,14 @@ fun NeutronTextField(
     width: Dp = 280.dp,
     value: MutableState<String>,
     isTextArea: Boolean = false,
-    onValueChange: (String) -> Unit = { value.value = it },
+    validator: ((String) -> Boolean)? = null,
+    isError: MutableState<Boolean> = remember { mutableStateOf(false) },
+    errorText: StringResource? = null,
+    onValueChange: (String) -> Unit = {
+        if (validator != null)
+            isError.value = value.value.isNotEmpty() && !validator.invoke(it)
+        value.value = it
+    },
     label: StringResource,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
@@ -642,7 +669,16 @@ fun NeutronTextField(
         },
         singleLine = !isTextArea,
         maxLines = 25,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        isError = isError.value,
+        supportingText = if (isError.value && errorText != null) {
+            {
+                Text(
+                    text = stringResource(errorText)
+                )
+            }
+        } else
+            null
     )
 }
 
@@ -653,7 +689,14 @@ fun NeutronOutlinedTextField(
     width: Dp = 300.dp,
     value: MutableState<String>,
     isTextArea: Boolean = false,
-    onValueChange: (String) -> Unit = { value.value = it },
+    validator: ((String) -> Boolean)? = null,
+    isError: MutableState<Boolean> = remember { mutableStateOf(false) },
+    errorText: StringResource? = null,
+    onValueChange: (String) -> Unit = {
+        if (validator != null)
+            isError.value = value.value.isNotEmpty() && !validator.invoke(it)
+        value.value = it
+    },
     label: StringResource,
     trailingIcon:  @Composable (() -> Unit)? = {
         IconButton(
@@ -682,7 +725,16 @@ fun NeutronOutlinedTextField(
         singleLine = !isTextArea,
         maxLines = 25,
         visualTransformation = visualTransformation,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        isError = isError.value,
+        supportingText = if (isError.value && errorText != null) {
+            {
+                Text(
+                    text = stringResource(errorText)
+                )
+            }
+        } else
+            null
     )
 }
 

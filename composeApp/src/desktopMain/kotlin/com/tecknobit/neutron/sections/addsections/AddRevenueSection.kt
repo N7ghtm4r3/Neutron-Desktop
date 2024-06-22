@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalResourceApi::class)
 
-package com.tecknobit.neutron.ui.sections.addsections
+package com.tecknobit.neutron.sections.addsections
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.apimanager.formatters.TimeFormatter
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.displayFontFamily
-import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource

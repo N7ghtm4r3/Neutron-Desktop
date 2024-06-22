@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalResourceApi::class)
 
-package com.tecknobit.neutron.ui.screens.session
+package com.tecknobit.neutron.screens.session
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.neutron.screens.Screen
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
+import com.tecknobit.neutron.screens.session.Home.Companion.revenues
+import com.tecknobit.neutron.sections.addsections.AddTicketRevenueSection
 import com.tecknobit.neutron.ui.*
-import com.tecknobit.neutron.ui.screens.Screen
-import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
-import com.tecknobit.neutron.ui.screens.session.Home.Companion.revenues
-import com.tecknobit.neutron.ui.sections.addsections.AddTicketRevenueSection
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import neutron.composeapp.generated.resources.Res
 import neutron.composeapp.generated.resources.delete_project

@@ -1,4 +1,4 @@
-package com.tecknobit.neutron.ui.screens.session
+package com.tecknobit.neutron.screens.session
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -28,11 +28,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tecknobit.apimanager.apis.QRCodeHelper
+import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronOutlinedTextField
 import com.tecknobit.neutron.ui.displayFontFamily
 import com.tecknobit.neutron.ui.navigator
-import com.tecknobit.neutron.ui.screens.Screen
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource

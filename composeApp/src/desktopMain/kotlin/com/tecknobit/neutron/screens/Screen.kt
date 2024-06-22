@@ -1,4 +1,4 @@
-package com.tecknobit.neutron.ui.screens
+package com.tecknobit.neutron.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

@@ -1,4 +1,4 @@
-package com.tecknobit.neutron.ui.screens.session
+package com.tecknobit.neutron.screens.session
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -29,9 +29,9 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
+import com.tecknobit.neutron.screens.Screen
+import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutron.ui.*
-import com.tecknobit.neutron.ui.screens.Screen
-import com.tecknobit.neutron.ui.screens.navigation.Splashscreen.Companion.user
 import com.tecknobit.neutron.ui.theme.NeutronTheme
 import com.tecknobit.neutron.ui.theme.errorLight
 import com.tecknobit.neutroncore.helpers.InputValidator.LANGUAGES_SUPPORTED

@@ -8,12 +8,19 @@ plugins {
 }
 
 kotlin {
-    jvm("desktop")
+    jvm("desktop") {
+        compilations.all {
+            kotlinOptions.jvmTarget = "18"
+        }
+        withJava()
+    }
     
     sourceSets {
         val desktopMain by getting
         
         commonMain.dependencies {
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+            runtimeOnly("androidx.compose.runtime:runtime-livedata:1.6.8")
             implementation("com.github.N7ghtm4r3:APIManager:2.2.3")
             implementation("com.tecknobit.neutroncore:Neutron-core:1.0.0")
             api("moe.tlaster:precompose:1.6.0")
@@ -23,6 +30,7 @@ kotlin {
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation("org.json:json:20240303")
             implementation("com.github.N7ghtm4r3:OctocatKDU:1.0.3")
+            implementation("com.github.N7ghtm4r3:Equinox:1.0.0")
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
