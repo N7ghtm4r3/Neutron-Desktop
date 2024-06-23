@@ -21,6 +21,8 @@ import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.ui.theme.AppTypography
 import com.tecknobit.neutron.ui.theme.primaryLight
 import com.tecknobit.neutron.viewmodels.NeutronViewModel.Companion.requester
+import com.tecknobit.neutroncore.helpers.InputValidator.DEFAULT_LANGUAGE
+import com.tecknobit.neutroncore.helpers.InputValidator.LANGUAGES_SUPPORTED
 import com.tecknobit.neutroncore.helpers.NeutronRequester
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import com.tecknobit.neutroncore.records.revenues.RevenueLabel
@@ -30,6 +32,7 @@ import neutron.composeapp.generated.resources.app_version
 import neutron.composeapp.generated.resources.project
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
+import java.util.*
 
 class Splashscreen : Screen() {
 
@@ -43,6 +46,7 @@ class Splashscreen : Screen() {
     @Composable
     override fun ShowScreen() {
         var startApp by remember { mutableStateOf(true) }
+        setLocale()
         PROJECT_LABEL = RevenueLabel(
             stringResource(Res.string.project),
             ProjectRevenue.PROJECT_LABEL_COLOR
@@ -107,6 +111,22 @@ class Splashscreen : Screen() {
                     CONNECT_SCREEN
             )
         }
+    }
+
+    /**
+     * Function to set locale language for the application
+     *
+     * No-any params required
+     */
+    private fun setLocale() {
+        var tag: String = DEFAULT_LANGUAGE
+        LANGUAGES_SUPPORTED.keys.forEach { key ->
+            if(key == localUser.language) {
+                tag = key
+                return@forEach
+            }
+        }
+        Locale.setDefault(Locale.forLanguageTag(tag))
     }
 
 }
