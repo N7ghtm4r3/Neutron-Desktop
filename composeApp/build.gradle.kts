@@ -26,6 +26,8 @@ kotlin {
             api("moe.tlaster:precompose:1.6.0")
             implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
             implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.0-alpha06")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+            implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.8.1")
             implementation("com.godaddy.android.colorpicker:compose-color-picker-jvm:0.7.0")
             implementation("com.darkrockstudios:mpfilepicker:3.1.0")
             implementation("org.json:json:20240303")
