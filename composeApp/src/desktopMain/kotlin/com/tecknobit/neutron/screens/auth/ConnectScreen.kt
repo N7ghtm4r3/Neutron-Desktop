@@ -270,6 +270,7 @@ class ConnectScreen: Screen() {
                 NeutronOutlinedTextField(
                     value = viewModel.email,
                     label = Res.string.email,
+                    mustBeInLowerCase = true,
                     keyboardOptions = keyboardOptions,
                     errorText = Res.string.email_not_valid,
                     isError = viewModel.emailError,

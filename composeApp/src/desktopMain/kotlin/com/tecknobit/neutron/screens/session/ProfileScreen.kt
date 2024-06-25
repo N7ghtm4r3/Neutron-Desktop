@@ -226,6 +226,7 @@ class ProfileScreen: Screen() {
                                     NeutronOutlinedTextField(
                                         value = viewModel.newEmail,
                                         label = Res.string.new_email,
+                                        mustBeInLowerCase = true,
                                         errorText = Res.string.email_not_valid,
                                         isError = viewModel.newEmailError,
                                         validator = { isEmailValid(it) }
