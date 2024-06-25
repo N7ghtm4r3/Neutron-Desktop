@@ -19,10 +19,6 @@ class ConnectViewModel(
 
     lateinit var isSignUp: MutableState<Boolean>
 
-    lateinit var storeDataOnline: MutableState<Boolean>
-
-    lateinit var showQrCodeLogin: MutableState<Boolean>
-
     lateinit var host: MutableState<String>
 
     lateinit var hostError: MutableState<Boolean>
@@ -56,56 +52,47 @@ class ConnectViewModel(
 
     private fun signUp() {
         if (signUpFormIsValid()) {
-            if (storeDataOnline.value) {
-                val currentLanguageTag = current.toLanguageTag().substringBefore("-")
-                var language = LANGUAGES_SUPPORTED[currentLanguageTag]
-                language = if (language == null)
-                    DEFAULT_LANGUAGE
-                else
-                    currentLanguageTag
-                requester.changeHost(host.value + BASE_ENDPOINT)
-                requester.sendRequest(
-                    request = {
-                        requester.signUp(
-                            serverSecret = serverSecret.value,
-                            name = name.value,
-                            surname = surname.value,
-                            email = email.value,
-                            password = password.value,
-                            language = language
-                        )
-                    },
-                    onSuccess = { response ->
-                        launchApp(
-                            name = name.value,
-                            surname = surname.value,
-                            language = language,
-                            response = response
-                        )
-                    },
-                    onFailure = { showSnack(it) }
-                )
-            } else {
-                // TODO: LOCAL SIGN UP
-            }
+            val currentLanguageTag = current.toLanguageTag().substringBefore("-")
+            var language = LANGUAGES_SUPPORTED[currentLanguageTag]
+            language = if (language == null)
+                DEFAULT_LANGUAGE
+            else
+                currentLanguageTag
+            requester.changeHost(host.value + BASE_ENDPOINT)
+            requester.sendRequest(
+                request = {
+                    requester.signUp(
+                        serverSecret = serverSecret.value,
+                        name = name.value,
+                        surname = surname.value,
+                        email = email.value,
+                        password = password.value,
+                        language = language
+                    )
+                },
+                onSuccess = { response ->
+                    launchApp(
+                        name = name.value,
+                        surname = surname.value,
+                        language = language,
+                        response = response
+                    )
+                },
+                onFailure = { showSnack(it) }
+            )
         }
     }
 
     private fun signUpFormIsValid(): Boolean {
-        var isValid: Boolean
-        if (storeDataOnline.value) {
-            isValid = isHostValid(host.value)
-            if (!isValid) {
-                hostError.value = true
-                return false
-            }
+        var isValid: Boolean = isHostValid(host.value)
+        if (!isValid) {
+            hostError.value = true
+            return false
         }
-        if (storeDataOnline.value) {
-            isValid = isServerSecretValid(serverSecret.value)
-            if (!isValid) {
-                serverSecretError.value = true
-                return false
-            }
+        isValid = isServerSecretValid(serverSecret.value)
+        if (!isValid) {
+            serverSecretError.value = true
+            return false
         }
         isValid = isNameValid(name.value)
         if (!isValid) {
@@ -132,39 +119,32 @@ class ConnectViewModel(
 
     private fun signIn() {
         if (signInFormIsValid()) {
-            if (storeDataOnline.value) {
-                requester.changeHost(host.value + BASE_ENDPOINT)
-                requester.sendRequest(
-                    request = {
-                        requester.signIn(
-                            email = email.value,
-                            password = password.value
-                        )
-                    },
-                    onSuccess = { response ->
-                        launchApp(
-                            name = response.getString(NAME_KEY),
-                            surname = response.getString(SURNAME_KEY),
-                            language = response.getString(LANGUAGE_KEY),
-                            response = response
-                        )
-                    },
-                    onFailure = { showSnack(it) }
-                )
-            } else {
-                // TODO: EXECUTE THE LOCAL SIGN IN
-            }
+            requester.changeHost(host.value + BASE_ENDPOINT)
+            requester.sendRequest(
+                request = {
+                    requester.signIn(
+                        email = email.value,
+                        password = password.value
+                    )
+                },
+                onSuccess = { response ->
+                    launchApp(
+                        name = response.getString(NAME_KEY),
+                        surname = response.getString(SURNAME_KEY),
+                        language = response.getString(LANGUAGE_KEY),
+                        response = response
+                    )
+                },
+                onFailure = { showSnack(it) }
+            )
         }
     }
 
     private fun signInFormIsValid(): Boolean {
-        var isValid: Boolean
-        if (storeDataOnline.value) {
-            isValid = isHostValid(host.value)
-            if (!isValid) {
-                hostError.value = true
-                return false
-            }
+        var isValid: Boolean = isHostValid(host.value)
+        if (!isValid) {
+            hostError.value = true
+            return false
         }
         isValid = isEmailValid(email.value)
         if (!isValid) {

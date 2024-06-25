@@ -7,9 +7,7 @@ import com.tecknobit.equinox.FetcherManager
 import com.tecknobit.equinox.FetcherManager.Companion.activeContext
 import com.tecknobit.equinox.FetcherManager.FetcherManagerWrapper
 import com.tecknobit.equinox.Requester
-import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutroncore.helpers.NeutronRequester
-import com.tecknobit.neutroncore.records.User.UserStorage.Local
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +22,7 @@ open class NeutronViewModel(
 
     }
 
-    protected val refreshRoutine = CoroutineScope(Dispatchers.Default)
+    private val refreshRoutine = CoroutineScope(Dispatchers.Default)
 
     private val fetcherManager = FetcherManager(refreshRoutine)
 
@@ -66,10 +64,6 @@ open class NeutronViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             snackbarHostState.showSnackbar(helper.getString(Requester.RESPONSE_MESSAGE_KEY))
         }
-    }
-
-    protected fun workInLocal(): Boolean {
-        return localUser.storage == Local
     }
 
     fun setActiveContext(

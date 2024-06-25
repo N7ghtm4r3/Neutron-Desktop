@@ -4,12 +4,12 @@ import androidx.compose.material3.SnackbarHostState
 import com.tecknobit.apimanager.formatters.TimeFormatter
 import com.tecknobit.apimanager.trading.TradingTools.roundValue
 import com.tecknobit.apimanager.trading.TradingTools.textualizeAssetPercent
+import com.tecknobit.equinox.Requester.Companion.RESPONSE_MESSAGE_KEY
 import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.screens.session.Home
 import com.tecknobit.neutroncore.records.User.*
 import com.tecknobit.neutroncore.records.revenues.ProjectRevenue
 import com.tecknobit.neutroncore.records.revenues.Revenue
-import com.tecknobit.neutroncore.records.revenues.Revenue.REVENUES_KEY
 import com.tecknobit.neutroncore.records.revenues.Revenue.returnRevenues
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,28 +37,24 @@ class HomeViewModel(
     }
 
     fun getRevenuesList() {
-        if (workInLocal()) {
-            // TODO: FETCH FROM LOCAL 
-        } else {
-            execRefreshingRoutine(
-                currentContext = Home::class.java,
-                routine = {
-                    requester.sendRequest(
-                        request = {
-                            requester.listRevenues()
-                        },
-                        onSuccess = { helper ->
-                            _revenues.value = returnRevenues(helper.getJSONArray(REVENUES_KEY))
-                            localUser.currency = NeutronCurrency.valueOf(helper.getString(CURRENCY_KEY))
-                            localUser.profilePic = helper.getString(PROFILE_PIC_KEY)
-                            getWalletBalance()
-                            getWalletTrend()
-                        },
-                        onFailure = { showSnack(it) }
-                    )
-                }
-            )
-        }
+        execRefreshingRoutine(
+            currentContext = Home::class.java,
+            routine = {
+                requester.sendRequest(
+                    request = {
+                        requester.listRevenues()
+                    },
+                    onSuccess = { helper ->
+                        _revenues.value = returnRevenues(helper.getJSONArray(RESPONSE_MESSAGE_KEY))
+                        getWalletBalance()
+                        getWalletTrend()
+                        localUser.currency = NeutronCurrency.valueOf(helper.getString(CURRENCY_KEY))
+                        localUser.profilePic = helper.getString(PROFILE_PIC_KEY)
+                    },
+                    onFailure = { showSnack(it) }
+                )
+            }
+        )
     }
 
     private fun getWalletBalance() {

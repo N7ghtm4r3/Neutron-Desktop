@@ -1,33 +1,24 @@
 package com.tecknobit.neutron.screens.auth
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.QrCode2
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.loadImageBitmap
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.tecknobit.apimanager.apis.QRCodeHelper
 import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.ui.NeutronButton
 import com.tecknobit.neutron.ui.NeutronOutlinedTextField
@@ -38,15 +29,10 @@ import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import org.json.JSONObject
 import java.awt.Desktop
-import java.io.InputStream
 import java.net.URI
-import java.util.*
 
 class ConnectScreen: Screen() {
-
-    private var localDatabaseNotExists: Boolean = true
 
     private val viewModel = ConnectViewModel(
         snackbarHostState = snackbarHostState
@@ -55,9 +41,6 @@ class ConnectScreen: Screen() {
     @Composable
     override fun ShowScreen() {
         viewModel.isSignUp = remember { mutableStateOf(true) }
-        viewModel.storeDataOnline = remember { mutableStateOf(false) }
-        viewModel.showQrCodeLogin = remember { mutableStateOf(false) }
-        localDatabaseNotExists = Random().nextBoolean() // TODO: TO INIT CORRECTLY FETCHING THE DATABASE
         viewModel.host = remember { mutableStateOf("") }
         viewModel.hostError = remember { mutableStateOf(false) }
         viewModel.serverSecret = remember { mutableStateOf("") }
@@ -72,21 +55,6 @@ class ConnectScreen: Screen() {
         viewModel.passwordError = remember { mutableStateOf(false) }
         Scaffold (
             snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-            floatingActionButton = {
-                AnimatedVisibility(
-                    visible = !viewModel.isSignUp.value && !viewModel.storeDataOnline.value && localDatabaseNotExists
-                ) {
-                    FloatingActionButton(
-                        onClick = { viewModel.showQrCodeLogin.value = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.QrCode2,
-                            contentDescription = null
-                        )
-                    }
-                    LoginQrCode()
-                }
-            }
         ) {
             Column (
                 modifier = Modifier
@@ -183,53 +151,28 @@ class ConnectScreen: Screen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Row (
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    Switch(
-                        checked = viewModel.storeDataOnline.value,
-                        onCheckedChange = { viewModel.storeDataOnline.value = it }
-                    )
-                    Text(
-                        text = stringResource(
-                            if (viewModel.isSignUp.value)
-                                Res.string.store_data_online
-                            else
-                                Res.string.stored_data_online
-                        )
-                    )
-                }
                 val keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Next
                 )
+                NeutronOutlinedTextField(
+                    value = viewModel.host,
+                    label = Res.string.host_address,
+                    keyboardOptions = keyboardOptions,
+                    errorText = Res.string.host_address_not_valid,
+                    isError = viewModel.hostError,
+                    validator = { isHostValid(it) }
+                )
                 AnimatedVisibility(
-                    visible = viewModel.storeDataOnline.value
+                    visible = viewModel.isSignUp.value
                 ) {
-                    Column (
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        NeutronOutlinedTextField(
-                            value = viewModel.host,
-                            label = Res.string.host_address,
-                            keyboardOptions = keyboardOptions,
-                            errorText = Res.string.host_address_not_valid,
-                            isError = viewModel.hostError,
-                            validator = { isHostValid(it) }
-                        )
-                        AnimatedVisibility(
-                            visible = viewModel.isSignUp.value
-                        ) {
-                            NeutronOutlinedTextField(
-                                value = viewModel.serverSecret,
-                                label = Res.string.server_secret,
-                                keyboardOptions = keyboardOptions,
-                                errorText = Res.string.server_secret_not_valid,
-                                isError = viewModel.serverSecretError,
-                                validator = { isServerSecretValid(it) }
-                            )
-                        }
-                    }
+                    NeutronOutlinedTextField(
+                        value = viewModel.serverSecret,
+                        label = Res.string.server_secret,
+                        keyboardOptions = keyboardOptions,
+                        errorText = Res.string.server_secret_not_valid,
+                        isError = viewModel.serverSecretError,
+                        validator = { isServerSecretValid(it) }
+                    )
                 }
                 AnimatedVisibility(
                     visible = viewModel.isSignUp.value
@@ -255,17 +198,6 @@ class ConnectScreen: Screen() {
                             validator = { isSurnameValid(it) }
                         )
                     }
-                }
-                AnimatedVisibility(
-                    visible = !viewModel.isSignUp.value && !viewModel.storeDataOnline.value && localDatabaseNotExists
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .width(300.dp),
-                        text = stringResource(Res.string.local_sign_in_message),
-                        textAlign = TextAlign.Justify,
-                        fontSize = 12.sp
-                    )
                 }
                 NeutronOutlinedTextField(
                     value = viewModel.email,
@@ -339,63 +271,6 @@ class ConnectScreen: Screen() {
                         ),
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp
-                    )
-                }
-            }
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-    @Composable
-    private fun LoginQrCode() {
-        val qrCodeHelper = QRCodeHelper()
-        val qrcode: InputStream
-        if (viewModel.showQrCodeLogin.value) {
-            // TODO: TO CREATE THE SESSION WITH THE SOCKETMANAGER TO PASS IN THE QRCODE DATA
-            qrcode = qrCodeHelper.getQRCodeStream(
-                JSONObject().put("data", "real_data"),
-                "localSignIn.png",
-                200
-            )
-            ModalBottomSheet(
-                onDismissRequest = {
-                    qrCodeHelper.deleteQRCode(qrcode)
-                    viewModel.showQrCodeLogin.value = false
-                }
-            ) {
-                Column (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            all = 16.dp
-                        ),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        modifier = Modifier
-                            .shadow(
-                                elevation = 2.dp,
-                                shape = RoundedCornerShape(
-                                    size = 10.dp
-                                )
-                            )
-                            .clip(
-                                RoundedCornerShape(
-                                    size = 10.dp
-                                )
-                            )
-                            .size(175.dp),
-                        bitmap = loadImageBitmap(qrcode),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(
-                                top = 10.dp
-                            ),
-                        text = stringResource(Res.string.signup_qr_code_title)
                     )
                 }
             }

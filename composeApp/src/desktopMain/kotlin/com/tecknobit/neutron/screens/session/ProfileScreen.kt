@@ -1,9 +1,12 @@
 package com.tecknobit.neutron.screens.session
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -12,12 +15,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.darkrockstudios.libraries.mpfilepicker.FilePicker
@@ -34,21 +34,14 @@ import com.tecknobit.neutroncore.helpers.InputValidator.*
 import com.tecknobit.neutroncore.records.User.ApplicationTheme
 import com.tecknobit.neutroncore.records.User.ApplicationTheme.*
 import com.tecknobit.neutroncore.records.User.NeutronCurrency
-import com.tecknobit.neutroncore.records.User.UserStorage.Local
-import kotlinx.coroutines.delay
 import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import java.util.*
 
 class ProfileScreen: Screen() {
 
     private lateinit var theme: MutableState<ApplicationTheme>
-
-    private lateinit var hostLocalSignIn: MutableState<Boolean>
-
-    private val currentStorageIsLocal = localUser.storage == Local
 
     private val viewModel = ProfileViewModel(
         snackbarHostState = snackbarHostState
@@ -121,28 +114,6 @@ class ProfileScreen: Screen() {
                                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                             contentDescription = null
                                         )
-                                    }
-                                }
-                                if(currentStorageIsLocal) {
-                                    hostLocalSignIn = remember { mutableStateOf(false) }
-                                    HostLocalSignIn()
-                                    Column (
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        horizontalAlignment = Alignment.End
-                                    ) {
-                                        IconButton(
-                                            modifier = Modifier
-                                                .padding(
-                                                    top = 16.dp
-                                                ),
-                                            onClick = { hostLocalSignIn.value = true }
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Lan,
-                                                contentDescription = null
-                                            )
-                                        }
                                     }
                                 }
                             }
@@ -325,16 +296,6 @@ class ProfileScreen: Screen() {
                             ChangeTheme(
                                 changeTheme = changeTheme
                             )
-                            val showChangeStorage = remember { mutableStateOf(false) }
-                            UserInfo(
-                                header = Res.string.storage_data,
-                                info = localUser.storage.name,
-                                buttonText = Res.string.change,
-                                onClick = { showChangeStorage.value = true }
-                            )
-                            ChangeStorage(
-                                changeStorage = showChangeStorage
-                            )
                             val showLogoutAlert = remember { mutableStateOf(false) }
                             UserInfo(
                                 header = Res.string.disconnect,
@@ -358,76 +319,6 @@ class ProfileScreen: Screen() {
                 )
             }
         }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-    @Composable
-    private fun HostLocalSignIn() {
-        val isListening = remember { mutableStateOf(true) }
-        // TODO: TO REMOVE GET FROM THE REAL REQUEST RESPONSE
-        val success = remember { mutableStateOf(Random().nextBoolean()) }
-        if(hostLocalSignIn.value) {
-            ModalBottomSheet(
-                sheetState = rememberModalBottomSheetState(
-                    confirmValueChange = { !isListening.value }
-                ),
-                onDismissRequest = {
-                    if(!isListening.value)
-                        hostLocalSignIn.value = false
-                }
-            ) {
-                // TODO: IMPLEMENT THE SOCKETMANAGER OR THE WRAPPER CLASS TO EXECUTE THE HOSTING AND THE DATA TRANSFER
-
-                // TODO: TO REMOVE MAKE THE REAL WORKFLOW INSTEAD
-                LaunchedEffect(
-                    key1 = true
-                ) {
-                    delay(3000L)
-                    isListening.value = false
-                }
-                Column (
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    if(isListening.value) {
-                        Text(
-                            text = stringResource(Res.string.hosting_local_sign_in),
-                            fontFamily = displayFontFamily,
-                            fontSize = 20.sp
-                        )
-                    }
-                    ResponseStatusUI(
-                        isWaiting = isListening,
-                        statusText = Res.string.waiting_for_the_request,
-                        isSuccessful = success,
-                        successText = Res.string.sign_in_executed_successfully,
-                        failedText = Res.string.sign_in_failed_message
-                    )
-                    TextButton(
-                        modifier = Modifier
-                            .align(Alignment.End),
-                        onClick = {
-                            // TODO: CLOSE THE LISTENING THEN
-                            hostLocalSignIn.value = false
-                            isListening.value = false
-                        }
-                    ) {
-                        Text(
-                            text = stringResource(
-                                if(isListening.value)
-                                    Res.string.cancel
-                                else
-                                    Res.string.close
-                            )
-                        )
-                    }
-                }
-            }
-        } else
-            isListening.value = true
     }
 
     @OptIn(ExperimentalResourceApi::class)
@@ -626,152 +517,6 @@ class ProfileScreen: Screen() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
-    @Composable
-    private fun ChangeStorage(
-        changeStorage: MutableState<Boolean>
-    ) {
-        viewModel.hostAddress = remember { mutableStateOf("") }
-        viewModel.hostError = remember { mutableStateOf(false) }
-        viewModel.serverSecret = remember { mutableStateOf("") }
-        viewModel.serverSecretError = remember { mutableStateOf(false) }
-        viewModel.isExecuting = remember { mutableStateOf(false) }
-        viewModel.waiting = remember { mutableStateOf(true) }
-        viewModel.success = remember { mutableStateOf(false) }
-        val executeRequest = {
-            viewModel.isExecuting.value = true
-            viewModel.waiting.value = true
-            viewModel.success.value = false
-            viewModel.changeStorage()
-        }
-        val resetLayout = {
-            viewModel.isExecuting.value = false
-            viewModel.hostAddress.value = ""
-            viewModel.hostError.value = false
-            viewModel.serverSecret.value = ""
-            viewModel.serverSecretError.value = false
-            changeStorage.value = false
-            viewModel.waiting.value = true
-            viewModel.success.value = false
-        }
-        ChangeInfo(
-            showModal = changeStorage,
-            sheetState = rememberModalBottomSheetState(
-                confirmValueChange = { !viewModel.isExecuting.value || viewModel.success.value }
-            ),
-            onDismissRequest = { resetLayout.invoke() }
-        ) {
-            Column (
-                modifier = Modifier
-                    .padding(
-                        all = 16.dp
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                if (!viewModel.isExecuting.value) {
-                    val awareText = stringResource(
-                        if(currentStorageIsLocal)
-                            Res.string.aware_server_message
-                        else
-                            Res.string.aware_local_message
-                    )
-                    Text(
-                        text = stringResource(Res.string.change_storage_location),
-                        fontFamily = displayFontFamily,
-                        fontSize = 20.sp
-                    )
-                    Text(
-                        text = awareText,
-                        textAlign = TextAlign.Justify
-                    )
-                    if(currentStorageIsLocal) {
-                        NeutronOutlinedTextField(
-                            modifier = Modifier
-                                .width(300.dp),
-                            value = viewModel.hostAddress,
-                            label = Res.string.host_address,
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Next
-                            )
-                        )
-                        NeutronOutlinedTextField(
-                            modifier = Modifier
-                                .width(300.dp),
-                            value = viewModel.serverSecret,
-                            label = Res.string.server_secret
-                        )
-                    }
-                } else {
-                    ResponseStatusUI(
-                        isWaiting = viewModel.waiting,
-                        statusText = Res.string.transferring_data,
-                        isSuccessful = viewModel.success,
-                        successText = Res.string.transfer_executed_successfully,
-                        failedText = Res.string.transfer_failed
-                    )
-                }
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.Bottom,
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    if (!viewModel.isExecuting.value) {
-                        TextButton(
-                            onClick = { resetLayout.invoke() }
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    if (viewModel.isExecuting.value)
-                                        Res.string.cancel
-                                    else
-                                        Res.string.dismiss
-                                )
-                            )
-                        }
-                        TextButton(
-                            onClick = { executeRequest.invoke() }
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.confirm)
-                            )
-                        }
-                    } else {
-                        TextButton(
-                            onClick = {
-                                if (viewModel.waiting.value)
-                                    viewModel.isExecuting.value = false
-                                else {
-                                    if (viewModel.success.value) {
-                                        resetLayout.invoke()
-                                        changeStorage.value = false
-                                            Local
-                                        navToSplash()
-                                    } else
-                                        executeRequest.invoke()
-                                }
-                            }
-                        ) {
-                            Text(
-                                text = stringResource(
-                                    if (viewModel.waiting.value)
-                                        Res.string.cancel
-                                    else {
-                                        if (viewModel.success.value)
-                                            Res.string.close
-                                        else
-                                            Res.string.retry
-                                    }
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ChangeInfo(
@@ -789,59 +534,6 @@ class ProfileScreen: Screen() {
                     content = content
                 )
             }
-        }
-    }
-
-    @OptIn(ExperimentalResourceApi::class)
-    @Composable
-    private fun ResponseStatusUI(
-        isWaiting: MutableState<Boolean>,
-        statusText: StringResource,
-        isSuccessful: MutableState<Boolean>,
-        successText: StringResource,
-        failedText: StringResource
-    ) {
-        if(isWaiting.value) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(
-                        top = 20.dp
-                    )
-                    .size(75.dp)
-            )
-            Text(
-                modifier = Modifier
-                    .padding(
-                        top = 10.dp
-                    ),
-                text = stringResource(statusText),
-                fontSize = 14.sp
-            )
-        } else {
-            Image(
-                modifier = Modifier
-                    .size(125.dp),
-                imageVector = if(isSuccessful.value)
-                    Icons.Default.CheckCircle
-                else
-                    Icons.Default.Cancel,
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(
-                    color = if(isSuccessful.value)
-                        MaterialTheme.colorScheme.primary
-                    else
-                        MaterialTheme.colorScheme.error
-                )
-            )
-            Text(
-                text = stringResource(
-                    if (isSuccessful.value)
-                        successText
-                    else
-                        failedText
-                ),
-                fontSize = 14.sp
-            )
         }
     }
 
