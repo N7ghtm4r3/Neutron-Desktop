@@ -34,10 +34,19 @@ import javax.net.ssl.SSLSession
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
 
+/**
+ * **bodyFontFamily** -> the Neutron's body font family
+ */
 lateinit var bodyFontFamily: FontFamily
 
+/**
+ * **displayFontFamily** -> the Neutron's font family
+ */
 lateinit var displayFontFamily: FontFamily
 
+/**
+ * **navigator** -> the navigator instance is useful to manage the navigation between the screens of the application
+ */
 lateinit var navigator: Navigator
 
 /**
@@ -50,6 +59,10 @@ private val sslContext = SSLContext.getInstance("TLS")
  */
 lateinit var imageLoader: ImageLoader
 
+/**
+ * Method to sho the layout of **Neutron** desktop app.
+ * No-any params required
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun App() {

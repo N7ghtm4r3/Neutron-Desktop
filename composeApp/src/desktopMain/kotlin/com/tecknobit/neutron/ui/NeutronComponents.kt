@@ -46,8 +46,18 @@ import org.jetbrains.compose.resources.stringResource
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * **PROJECT_LABEL** the label used to indicate a [ProjectRevenue]
+ */
 lateinit var PROJECT_LABEL: RevenueLabel
 
+/**
+ * Function to display the user revenues
+ *
+ * @param snackbarHostState: the host to launch the snackbar messages
+ * @param revenues: the list of the revenues to display
+ * @param navToProject: the function to navigate to a project screen
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DisplayRevenues(
@@ -113,6 +123,11 @@ fun DisplayRevenues(
     }
 }
 
+/**
+ * Function to display a general revenue
+ *
+ * @param revenue: the revenue to display
+ */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalResourceApi::class)
 @Composable
 fun GeneralRevenue(
@@ -223,6 +238,12 @@ fun GeneralRevenue(
         HorizontalDivider()
 }
 
+/**
+ * Function to display a project revenue
+ *
+ * @param revenue: the project to display
+ * @param navToProject: the function to navigate to a project screen
+ */
 @Composable
 private fun ProjectRevenue(
     revenue: ProjectRevenue,
@@ -266,6 +287,11 @@ private fun ProjectRevenue(
     )
 }
 
+/**
+ * Function to display the info of a revenue
+ *
+ * @param revenue: the revenue to display its info
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun RevenueInfo(
@@ -331,6 +357,11 @@ fun RevenueInfo(
     }
 }
 
+/**
+ * Function to display a label as badge
+ *
+ * @param label: the label to display
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LabelBadge(
@@ -356,6 +387,13 @@ fun LabelBadge(
     }
 }
 
+/**
+ * Function to display the preview of a label when it is inserting
+ *
+ * @param modifier: the modifier of the label badge
+ * @param labels: the current labels list
+ * @param label: the label which is creating
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InsertionLabelBadge(
@@ -409,6 +447,13 @@ fun InsertionLabelBadge(
     }
 }
 
+/**
+ * Function to display a list of tickets
+ *
+ * @param projectRevenue: the project where the tickets are attached
+ * @param onRight: the action to execute when the user swipe to the right
+ * @param onDelete: the action to execute when the user want to delete a ticket
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DisplayTickets(
@@ -458,6 +503,15 @@ fun DisplayTickets(
     }
 }
 
+/**
+ * Function to create the container to manage the swipe gestures
+ *
+ * @param item: the current item to manage
+ * @param onRight: the action to execute when the user swipe to the right
+ * @param onDelete: the action to execute when the user want to delete the item
+ * @param animationDuration: the duration of the animation
+ * @param content: the content to display
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T> SwipeToDeleteContainer(
@@ -517,6 +571,11 @@ fun <T> SwipeToDeleteContainer(
     }
 }
 
+/**
+ * Function to display the background after the user swiped
+ *
+ * @param swipeDismissState: the swipe dismiss state used
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SwipeBackground(
@@ -551,6 +610,19 @@ private fun SwipeBackground(
     }
 }
 
+/**
+ * Function to display a custom [AlertDialog]
+ *
+ * @param show: whether show the alert dialog
+ * @param icon: the icon of the alert dialog
+ * @param onDismissAction: the action to execute when the alert dialog has been dismissed
+ * @param title: the title of the alert dialog
+ * @param text: the text displayed in the alert dialog
+ * @param dismissAction: the action to execute when the user dismissed the action
+ * @param dismissText: the text of the dismiss [TextButton]
+ * @param confirmAction: the action to execute when the used confirmed the action
+ * @param confirmText: the text of the confirm [TextButton]
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronAlertDialog(
@@ -582,6 +654,19 @@ fun NeutronAlertDialog(
     )
 }
 
+/**
+ * Function to display a custom [AlertDialog]
+ *
+ * @param show: whether show the alert dialog
+ * @param icon: the icon of the alert dialog
+ * @param onDismissAction: the action to execute when the alert dialog has been dismissed
+ * @param title: the title of the alert dialog
+ * @param text: the text displayed in the alert dialog
+ * @param dismissAction: the action to execute when the user dismissed the action
+ * @param dismissText: the text of the dismiss [TextButton]
+ * @param confirmAction: the action to execute when the used confirmed the action
+ * @param confirmText: the text of the confirm [TextButton]
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronAlertDialog(
@@ -638,6 +723,21 @@ fun NeutronAlertDialog(
     }
 }
 
+/**
+ * Function to display a custom [TextField]
+ *
+ * @param modifier: the modifier of the text field
+ * @param width: the width of the text field
+ * @param value: the action to execute when the alert dialog has been dismissed
+ * @param isTextArea: whether the text field is a text area or simple text field
+ * @param validator: the function to invoke to validate the input
+ * @param isError: whether the text field is in an error state
+ * @param errorText: the error text to display if [isError] is true
+ * @param onValueChange the callback that is triggered when the input service updates the text. An
+ * updated text comes as a parameter of the callback
+ * @param label: the label displayed in the text field
+ * @param keyboardOptions software keyboard options that contains configuration
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronTextField(
@@ -681,6 +781,24 @@ fun NeutronTextField(
     )
 }
 
+/**
+ * Function to display a custom [OutlinedTextField]
+ *
+ * @param modifier: the modifier of the text field
+ * @param width: the width of the text field
+ * @param value: the action to execute when the alert dialog has been dismissed
+ * @param mustBeInLowerCase: whether the input must be in lower case format
+ * @param isTextArea: whether the text field is a text area or simple text field
+ * @param validator: the function to invoke to validate the input
+ * @param isError: whether the text field is in an error state
+ * @param errorText: the error text to display if [isError] is true
+ * @param onValueChange the callback that is triggered when the input service updates the text. An
+ * updated text comes as a parameter of the callback
+ * @param label: the label displayed in the text field
+ * @param trailingIcon: the optional trailing icon to be displayed at the end of the text field container
+ * @param visualTransformation: transforms the visual representation of the input [value]
+ * @param keyboardOptions software keyboard options that contains configuration
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronOutlinedTextField(
@@ -741,6 +859,14 @@ fun NeutronOutlinedTextField(
     )
 }
 
+/**
+ * Function to display a custom [Button]
+ *
+ * @param modifier: the modifier to apply to the button
+ * @param onClick: the action to execute when the button is clicked
+ * @param text: the text of the button
+ * @param colors: the colors of the button
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun NeutronButton(
@@ -766,6 +892,12 @@ fun NeutronButton(
     }
 }
 
+/**
+ * Function to display a layout when a list of values is empty
+ *
+ * @param icon: the icon to display
+ * @param subText: the description of the layout
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun EmptyListUI(
@@ -794,6 +926,11 @@ fun EmptyListUI(
     }
 }
 
+/**
+ * Function to display a layout when an error occurred
+ *
+ * No-any params required
+ */
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ErrorUI() {

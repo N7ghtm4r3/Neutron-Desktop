@@ -23,22 +23,46 @@ import neutron.composeapp.generated.resources.last_month
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * The **Home** class is the screen where the user can show his/her revenues and create
+ * others revenues
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see Screen
+ */
 class Home: Screen() {
 
     companion object {
 
+        /**
+         * **revenues** the current list of the user's revenues
+         */
         lateinit var revenues: State<MutableList<Revenue>?>
 
     }
 
+    /**
+     * **addRevenue** whether to display the section to add a new revenues
+     */
     private lateinit var addRevenue: MutableState<Boolean>
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel = HomeViewModel(
         snackbarHostState = snackbarHostState
     )
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private lateinit var addRevenuesViewModel: AddRevenuesViewModel
 
+    /**
+     * Function to show the content of the screen
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {
@@ -135,6 +159,11 @@ class Home: Screen() {
         }
     }
 
+    /**
+     * Function to create the section to add the new revenues
+     *
+     * No-any params required
+     */
     @Composable
     private fun AddRevenue() {
         if (::addRevenuesViewModel.isInitialized.not()) {

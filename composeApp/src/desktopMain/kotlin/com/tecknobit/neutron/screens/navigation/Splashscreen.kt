@@ -34,14 +34,29 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 import java.util.*
 
+/**
+ * The **Splashscreen** class is the entry point of the application
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see Screen
+ */
 class Splashscreen : Screen() {
 
     companion object {
 
+        /**
+         * **localUser** the user of the current logged-in session, used to make the requests to the
+         * backed
+         */
         val localUser = DesktopLocalUser()
 
     }
 
+    /**
+     * Function to show the content of the screen
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {

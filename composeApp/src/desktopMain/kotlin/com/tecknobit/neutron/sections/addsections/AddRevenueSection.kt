@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.tecknobit.apimanager.annotations.Structure
 import com.tecknobit.apimanager.annotations.Wrapper
 import com.tecknobit.apimanager.formatters.TimeFormatter
 import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
@@ -42,6 +43,17 @@ import java.util.Calendar.HOUR_OF_DAY
 import java.util.Calendar.MINUTE
 import kotlin.collections.ArrayDeque
 
+/**
+ * The **AddRevenueSection** class is the section where the user can create and insert a new revenue
+ *
+ * @param show: whether to show this section
+ * @param startContext: the context from this section has been invoked
+ * @param mainViewModel: the view model of the class which invoked this section
+ * @param viewModel: the viewmodel used to manage the creation of the revenues
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ */
+@Structure
 abstract class AddRevenueSection (
     val show: MutableState<Boolean>,
     val startContext: Class<*>,
@@ -49,22 +61,48 @@ abstract class AddRevenueSection (
     open val viewModel: AddRevenueViewModel
 ) {
 
+    /**
+     * *calendar* -> the helper used to validate the date values inserted
+     */
     private val calendar: Calendar = Calendar.getInstance()
 
+    /**
+     * *formatter* -> the helper used to format the time values
+     */
     protected val formatter: TimeFormatter = TimeFormatter.getInstance()
 
+    /**
+     * *dateFormat* -> the pattern to use to format the date
+     */
     protected val dateFormat = "dd/MM/yyyy"
 
+    /**
+     * *timeFormat* -> the pattern to use to format the time
+     */
     protected val timeFormat = "HH:mm:ss"
 
+    /**
+     * *showKeyboard* -> whether display the keyboard
+     */
     protected lateinit var showKeyboard: MutableState<Boolean>
 
+    /**
+     * *digits* -> the queue of the current decimal digits inserted in the revenue value
+     */
     private val digits : ArrayDeque<Int> = ArrayDeque()
 
+    /**
+     * *snackbarHostState* -> the host to launch the snackbar messages
+     */
     protected val snackbarHostState by lazy {
         SnackbarHostState()
     }
 
+    /**
+     * Function to display the section where the user can insert the revenue data
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun AddRevenue() {
@@ -126,6 +164,11 @@ abstract class AddRevenueSection (
         }
     }
 
+    /**
+     * Function to display a custom digits keyboard on screen
+     *
+     * No-any params required
+     */
     @Composable
     protected fun Keyboard() {
         AnimatedVisibility(
@@ -234,6 +277,12 @@ abstract class AddRevenueSection (
         }
     }
 
+    /**
+     * Function to create a button for the custom [Keyboard] to insert a number value
+     *
+     * @param modifier: the modifier to apply to the button
+     * @param number: the value of the number to apply to the button
+     */
     @Wrapper
     @Composable
     protected fun NumberKeyboardButton(
@@ -256,6 +305,14 @@ abstract class AddRevenueSection (
         )
     }
 
+    /**
+     * Function to create a button for the custom [Keyboard] to execute any action
+     *
+     * @param modifier: the modifier to apply to the button
+     * @param onClick: the action to execute when the button has been clicked
+     * @param text: the text of the button
+     * @param fontSize: the font size of the [text]
+     */
     @Composable
     protected fun KeyboardButton(
         modifier: Modifier,
@@ -274,6 +331,13 @@ abstract class AddRevenueSection (
         }
     }
 
+    /**
+     * Function to create a button for the custom [Keyboard] to execute an action
+     *
+     * @param modifier: the modifier to apply to the button
+     * @param action: the action to execute when the button has been clicked
+     * @param icon: the icon of the button
+     */
     @Composable
     protected fun ActionButton(
         modifier: Modifier = Modifier,
@@ -296,9 +360,22 @@ abstract class AddRevenueSection (
         }
     }
 
+    /**
+     * Function to display the form where the user can insert the details of the revenue to add,
+     * so will be different if the revenue is a [GeneralRevenue] or it will be a [ProjectRevenue]
+     *
+     * No-any params required
+     */
     @Composable
     protected abstract fun InputForm()
 
+    /**
+     * Function to display a temporal value
+     *
+     * @param info: the info displayed
+     * @param infoValue: value of the time info displayed
+     * @param onClick: the action to execute when the button has been clicked
+     */
     @Composable
     protected fun TimeInfo(
         info: StringResource,
@@ -350,6 +427,18 @@ abstract class AddRevenueSection (
         }
     }
 
+    /**
+     * Function to display the section of a temporal value
+     *
+     * @param dateTitle: the title for the date section
+     * @param date: the date value
+     * @param displayDatePickerDialog: whether display the [DatePickerDialog]
+     * @param dateState: the state attached to the [displayDatePickerDialog]
+     * @param timeTitle: the title for the time section
+     * @param time: the time value
+     * @param displayTimePickerDialog: whether display the [TimePickerDialog]
+     * @param timePickerState: the state attached to the [displayTimePickerDialog]
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     protected fun TimeInfoSection(
@@ -415,6 +504,11 @@ abstract class AddRevenueSection (
         )
     }
 
+    /**
+     * Function to get a [TimePickerState] to use
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     protected fun getTimePickerState(): TimePickerState {
@@ -424,6 +518,14 @@ abstract class AddRevenueSection (
         )
     }
 
+    /**
+     * Function to display the dialog to insert the time value
+     *
+     * @param showTimePicker: whether display the [TimePickerDialog]
+     * @param timeState: the state attached to the [TimePickerDialog]
+     * @param confirmAction: the action to execute when the user confirmed
+     *
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     protected fun TimePickerDialog(
@@ -458,6 +560,11 @@ abstract class AddRevenueSection (
         }
     }
 
+    /**
+     * Function to execute the back navigation from the current activity to the previous activity
+     *
+     * No-any params required
+     */
     protected fun navBack() {
         viewModel.revenueValue.value = "0"
         showKeyboard.value = true

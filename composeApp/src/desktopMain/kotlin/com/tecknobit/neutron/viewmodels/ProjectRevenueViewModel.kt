@@ -9,6 +9,18 @@ import com.tecknobit.neutroncore.records.revenues.TicketRevenue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+/**
+ * The **ProjectRevenueViewModel** class is the support class used by the [ProjectRevenueScreen]
+ * to refresh and work on a project
+ *
+ * @param snackbarHostState: the host to launch the snackbar messages
+ * @param initialProjectRevenue: the initial project value to set
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see NeutronViewModel
+ * @see ViewModel
+ * @see FetcherManagerWrapper
+ */
 class ProjectRevenueViewModel(
     snackbarHostState: SnackbarHostState,
     initialProjectRevenue: ProjectRevenue
@@ -16,17 +28,34 @@ class ProjectRevenueViewModel(
     snackbarHostState = snackbarHostState
 ) {
 
+    /**
+     * **_projectRevenue** -> the current project revenue displayed
+     */
     private val _projectRevenue = MutableStateFlow(
         value = initialProjectRevenue
     )
     val projectRevenue: StateFlow<ProjectRevenue> = _projectRevenue
 
+    /**
+     * **showDeleteProject** -> whether show the dialog to warn about the project deletion
+     */
     lateinit var showDeleteProject: MutableState<Boolean>
 
+    /**
+     * Function to restart the current [refreshRoutine] after other requests has been executed,
+     * will relaunch the [refreshProjectRevenue] routine
+     *
+     * No-any params required
+     */
     override fun restartRefresher() {
         refreshProjectRevenue()
     }
 
+    /**
+     * Function to execute the refreshing routine to update the [_projectRevenue]
+     *
+     * No-any params required
+     */
     fun refreshProjectRevenue() {
         execRefreshingRoutine(
             currentContext = ProjectRevenueScreen::class.java,
@@ -46,6 +75,11 @@ class ProjectRevenueViewModel(
         )
     }
 
+    /**
+     * Function to execute the request to close a [TicketRevenue] of the project
+     *
+     * @param ticket: the ticket to close
+     */
     fun closeTicket(
         ticket: TicketRevenue
     ) {
@@ -67,6 +101,11 @@ class ProjectRevenueViewModel(
         )
     }
 
+    /**
+     * Function to execute the request to delete a [TicketRevenue] of the project
+     *
+     * @param ticket: the ticket to delete
+     */
     fun deleteTicket(
         ticket: TicketRevenue
     ) {
@@ -82,6 +121,11 @@ class ProjectRevenueViewModel(
         )
     }
 
+    /**
+     * Function to execute the request to delete the [_projectRevenue] displayed
+     *
+     * @param onSuccess: the action to execute if the request has been successful
+     */
     fun deleteProjectRevenue(
         onSuccess: () -> Unit
     ) {

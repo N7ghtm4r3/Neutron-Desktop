@@ -11,38 +11,94 @@ import com.tecknobit.neutroncore.helpers.Endpoints.BASE_ENDPOINT
 import com.tecknobit.neutroncore.helpers.InputValidator.*
 import com.tecknobit.neutroncore.records.User.*
 
+/**
+ * The **ConnectViewModel** class is the support class used by the [ConnectActivityViewModel]
+ * to execute the authentication requests to the backend
+ *
+ * @param snackbarHostState: the host to launch the snackbar messages
+ * @param context: the current context where this model has been created
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see NeutronViewModel
+ * @see ViewModel
+ * @see FetcherManagerWrapper
+ */
 class ConnectViewModel(
     snackbarHostState: SnackbarHostState
 ) : NeutronViewModel(
     snackbarHostState = snackbarHostState
 ) {
 
+    /**
+     * **isSignUp** -> whether the auth request to execute is sign up or sign in
+     */
     lateinit var isSignUp: MutableState<Boolean>
 
+    /**
+     * **host** -> the value of the host to reach
+     */
     lateinit var host: MutableState<String>
 
+    /**
+     * **hostError** -> whether the [host] field is not valid
+     */
     lateinit var hostError: MutableState<Boolean>
 
+    /**
+     * **serverSecret** -> the value of the server secret
+     */
     lateinit var serverSecret: MutableState<String>
 
+    /**
+     * **serverSecretError** -> whether the [serverSecret] field is not valid
+     */
     lateinit var serverSecretError: MutableState<Boolean>
 
+    /**
+     * **name** -> the name of the user
+     */
     lateinit var name: MutableState<String>
 
+    /**
+     * **nameError** -> whether the [name] field is not valid
+     */
     lateinit var nameError: MutableState<Boolean>
 
+    /**
+     * **surname** -> the surname of the user
+     */
     lateinit var surname: MutableState<String>
 
+    /**
+     * **surnameError** -> whether the [surname] field is not valid
+     */
     lateinit var surnameError: MutableState<Boolean>
 
+    /**
+     * **email** -> the email of the user
+     */
     lateinit var email: MutableState<String>
 
+    /**
+     * **emailError** -> whether the [email] field is not valid
+     */
     lateinit var emailError: MutableState<Boolean>
 
+    /**
+     * **password** -> the password of the user
+     */
     lateinit var password: MutableState<String>
 
+    /**
+     * **passwordError** -> whether the [password] field is not valid
+     */
     lateinit var passwordError: MutableState<Boolean>
 
+    /**
+     * Wrapper function to execute the specific authentication request
+     *
+     * No-any params required
+     */
     fun auth() {
         if (isSignUp.value)
             signUp()
@@ -50,6 +106,12 @@ class ConnectViewModel(
             signIn()
     }
 
+    /**
+     * Function to execute the sign-up authentication request, if successful the [localUser] will
+     * be initialized with the data received by the request
+     *
+     * No-any params required
+     */
     private fun signUp() {
         if (signUpFormIsValid()) {
             val currentLanguageTag = current.toLanguageTag().substringBefore("-")
@@ -83,6 +145,13 @@ class ConnectViewModel(
         }
     }
 
+    /**
+     * Function to validate the inputs for the [signUp] request
+     *
+     * No-any params required
+     *
+     * @return whether the inputs are valid as [Boolean]
+     */
     private fun signUpFormIsValid(): Boolean {
         var isValid: Boolean = isHostValid(host.value)
         if (!isValid) {
@@ -117,6 +186,12 @@ class ConnectViewModel(
         return true
     }
 
+    /**
+     * Function to execute the sign in authentication request, if successful the [localUser] will
+     * be initialized with the data received by the request
+     *
+     * No-any params required
+     */
     private fun signIn() {
         if (signInFormIsValid()) {
             requester.changeHost(host.value + BASE_ENDPOINT)
@@ -140,6 +215,13 @@ class ConnectViewModel(
         }
     }
 
+    /**
+     * Function to validate the inputs for the [signIn] request
+     *
+     * No-any params required
+     *
+     * @return whether the inputs are valid as [Boolean]
+     */
     private fun signInFormIsValid(): Boolean {
         var isValid: Boolean = isHostValid(host.value)
         if (!isValid) {
@@ -159,6 +241,14 @@ class ConnectViewModel(
         return true
     }
 
+    /**
+     * Function to launch the application after the authentication request
+     *
+     * @param response: the response of the authentication request
+     * @param name: the name of the user
+     * @param surname: the surname of the user
+     * @param language: the language of the user
+     */
     private fun launchApp(
         response: JsonHelper,
         name: String,

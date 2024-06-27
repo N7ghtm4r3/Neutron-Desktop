@@ -31,18 +31,45 @@ import neutron.composeapp.generated.resources.total_revenues
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * The **ProjectRevenueScreen** class is the screen where the user can show a project with its
+ * details and ticket
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see Screen
+ */
 class ProjectRevenueScreen : Screen() {
 
     companion object {
+
+        /**
+         * *projectRevenueId* -> the current project revenue identifier
+         */
         var projectRevenueId: String? = null
+
     }
 
+    /**
+     * *projectRevenue* -> the current project revenue displayed
+     */
     private lateinit var projectRevenue: State<ProjectRevenue>
+
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
 
     private lateinit var viewModel: ProjectRevenueViewModel
 
+    /**
+     * **addTicket** whether to display the section to add a new ticket
+     */
     private lateinit var addTicket: MutableState<Boolean>
 
+    /**
+     * Function to show the content of the screen
+     *
+     * No-any params required
+     */
     @Composable
     override fun ShowScreen() {
         if(projectRevenueId != null) {
@@ -151,6 +178,11 @@ class ProjectRevenueScreen : Screen() {
             ErrorUI()
     }
 
+    /**
+     * Function to display the section to delete the current project displayed
+     *
+     * No-any params required
+     */
     @Composable
     private fun DeleteProjectRevenue() {
         if (viewModel.showDeleteProject.value)
@@ -172,6 +204,11 @@ class ProjectRevenueScreen : Screen() {
         )
     }
 
+    /**
+     * Function to create the section to add a new ticket to the [projectRevenue]
+     *
+     * No-any params required
+     */
     @Composable
     private fun CreateTicket() {
         val ticketViewModel = AddTicketViewModel(

@@ -25,6 +25,17 @@ import neutron.composeapp.generated.resources.Res.string
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * The **AddTicketRevenueSection** class is the screen where the user can create and insert a new ticket
+ *
+ * @param show: whether to show this section
+ * @param startContext: the context from this section has been invoked
+ * @param mainViewModel: the view model of the class which invoked this section
+ * @param viewModel: the viewmodel used to manage the creation of the revenues
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see AddRevenueSection
+ */
 class AddTicketRevenueSection(
     show: MutableState<Boolean>,
     startContext: Class<*>,
@@ -38,6 +49,11 @@ class AddTicketRevenueSection(
     viewModel = viewModel
 ){
 
+    /**
+     * Function to display the form where the user can insert the details of the ticket to add
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun InputForm() {

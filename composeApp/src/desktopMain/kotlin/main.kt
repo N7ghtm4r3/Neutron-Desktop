@@ -8,6 +8,10 @@ import neutron.composeapp.generated.resources.app_name
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * Method to start the of **Neutron** desktop app.
+ * No-any params required
+ */
 @OptIn(ExperimentalResourceApi::class)
 fun main() = application {
     Window(

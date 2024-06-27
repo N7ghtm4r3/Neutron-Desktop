@@ -4,8 +4,14 @@ import androidx.compose.material3.Typography
 import com.tecknobit.neutron.ui.bodyFontFamily
 import com.tecknobit.neutron.ui.displayFontFamily
 
+/**
+ * **baseline** -> the Neutron's baseline
+ */
 val baseline = Typography()
 
+/**
+ * **Typography** -> the Neutron's Typography
+ */
 val AppTypography = Typography(
     displayLarge = baseline.displayLarge.copy(fontFamily = displayFontFamily),
     displayMedium = baseline.displayMedium.copy(fontFamily = displayFontFamily),

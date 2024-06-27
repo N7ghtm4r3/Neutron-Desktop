@@ -39,10 +39,22 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * The **ProfileScreen** class is the screen where the user manage his/her profile account
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see Screen
+ */
 class ProfileScreen: Screen() {
 
+    /**
+     * *theme* -> the current user's theme
+     */
     private lateinit var theme: MutableState<ApplicationTheme>
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel = ProfileViewModel(
         snackbarHostState = snackbarHostState
     )
@@ -52,6 +64,11 @@ class ProfileScreen: Screen() {
      */
     private val fileType = listOf("jpg", "png", "jpeg")
 
+    /**
+     * Function to show the content of the screen
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     override fun ShowScreen() {
@@ -321,6 +338,14 @@ class ProfileScreen: Screen() {
         }
     }
 
+    /**
+     * Function to display a specific info details of the user
+     *
+     * @param header: the header of the info to display
+     * @param info: the info details value to display
+     * @param buttonText: the text of the setting button
+     * @param onClick: the action to execute when the [buttonText] has been clicked
+     */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun UserInfo(
@@ -377,6 +402,11 @@ class ProfileScreen: Screen() {
         HorizontalDivider()
     }
 
+    /**
+     * Function to allow the user to change the current language setting
+     *
+     * @param changeLanguage: the state whether display this section
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ChangeLanguage(
@@ -422,6 +452,12 @@ class ProfileScreen: Screen() {
         }
     }
 
+    /**
+     * Function to allow the user to change the current currency setting
+     *
+     * @param changeCurrency: the state whether display this section
+     * @param currencyValue: the current value of the currency used by the user
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ChangeCurrency(
@@ -468,6 +504,11 @@ class ProfileScreen: Screen() {
         }
     }
 
+    /**
+     * Function to allow the user to change the current theme setting
+     *
+     * @param changeTheme: the state whether display this section
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ChangeTheme(
@@ -517,6 +558,14 @@ class ProfileScreen: Screen() {
         }
     }
 
+    /**
+     * Function to allow the user to change a current setting
+     *
+     * @param showModal: the state whether display the [ModalBottomSheet]
+     * @param sheetState: the state to apply to the [ModalBottomSheet]
+     * @param onDismissRequest: the action to execute when the the [ModalBottomSheet] has been dismissed
+     * @param content: the content to display
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ChangeInfo(
@@ -537,10 +586,21 @@ class ProfileScreen: Screen() {
         }
     }
 
+    /**
+     * Function to execute the back navigation from the current activity to the previous activity
+     *
+     * No-any params required
+     */
     private fun navBack() {
         navigator.navigate(HOME_SCREEN)
     }
 
+    /**
+     * Function to execute the back navigation from the [Splashscreen] activity after user changed any
+     * setting which required the refresh of the [localUser]
+     *
+     * No-any params required
+     */
     private fun navToSplash() {
         navigator.navigate(SPLASH_SCREEN)
     }

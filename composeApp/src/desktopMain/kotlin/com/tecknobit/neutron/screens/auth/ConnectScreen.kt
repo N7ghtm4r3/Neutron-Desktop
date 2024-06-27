@@ -32,12 +32,26 @@ import org.jetbrains.compose.resources.stringResource
 import java.awt.Desktop
 import java.net.URI
 
+/**
+ * The **ConnectScreen** class is useful to manage the authentication requests of the user
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see Screen
+ */
 class ConnectScreen: Screen() {
 
+    /**
+     * *viewModel* -> the support view model to manage the requests to the backend
+     */
     private val viewModel = ConnectViewModel(
         snackbarHostState = snackbarHostState
     )
 
+    /**
+     * Function to show the content of the screen
+     *
+     * No-any params required
+     */
     @Composable
     override fun ShowScreen() {
         viewModel.isSignUp = remember { mutableStateOf(true) }
@@ -66,6 +80,11 @@ class ConnectScreen: Screen() {
         }
     }
 
+    /**
+     * Function to create the header section of the activity
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun HeaderSection() {
@@ -137,6 +156,11 @@ class ConnectScreen: Screen() {
         }
     }
 
+    /**
+     * Function to create the form where the user can fill it with his credentials
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalResourceApi::class)
     @Composable
     private fun FormSection() {

@@ -41,6 +41,18 @@ import neutron.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
 
+/**
+ * The **AddRevenuesSection** class is the section where the user can create and insert a new
+ * general revenue
+ *
+ * @param show: whether to show this section
+ * @param startContext: the context from this section has been invoked
+ * @param mainViewModel: the view model of the class which invoked this section
+ * @param viewModel: the viewmodel used to manage the creation of the revenues
+ *
+ * @author N7ghtm4r3 - Tecknobit
+ * @see AddRevenueSection
+ */
 class AddRevenuesSection(
     show: MutableState<Boolean>,
     startContext: Class<*>,
@@ -53,6 +65,12 @@ class AddRevenuesSection(
     viewModel = viewModel,
 ) {
 
+    /**
+     * Function to display the form where the user can insert the details of the revenue to add,
+     * so will be different if the revenue is a [GeneralRevenue] or it will be a [ProjectRevenue]
+     *
+     * No-any params required
+     */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun InputForm() {
@@ -175,6 +193,11 @@ class AddRevenuesSection(
         }
     }
 
+    /**
+     * Function to display and manage the labels attached to the general revenue that has being creating
+     *
+     * @param labels: the current labels list
+     */
     @OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun Labels(
@@ -235,6 +258,12 @@ class AddRevenuesSection(
         }
     }
 
+    /**
+     * Function to display the form where the user can customize the label to attach to the revenue
+     *
+     * @param showAddLabel: whether show this form
+     * @param labels: the current labels list
+     */
     @Composable
     private fun AddLabel(
         showAddLabel: MutableState<Boolean>,
