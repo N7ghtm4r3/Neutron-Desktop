@@ -1,3 +1,4 @@
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPlacement
 import androidx.compose.ui.window.WindowState
@@ -19,7 +20,8 @@ fun main() = application {
         title = stringResource(Res.string.app_name),
         state = WindowState(
             placement = WindowPlacement.Maximized
-        )
+        ),
+        icon = painterResource("logo.png")
     ) {
         App()
     }
