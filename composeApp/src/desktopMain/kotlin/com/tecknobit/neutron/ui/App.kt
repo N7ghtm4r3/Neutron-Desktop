@@ -27,6 +27,7 @@ import neutron.composeapp.generated.resources.lilitaone
 import okhttp3.OkHttpClient
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
+import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
@@ -68,6 +69,7 @@ lateinit var imageLoader: ImageLoader
 fun App() {
     bodyFontFamily = FontFamily(Font(Res.font.anektelugu))
     displayFontFamily = FontFamily(Font(Res.font.lilitaone))
+    sslContext.init(null, validateSelfSignedCertificate(), SecureRandom())
     imageLoader = ImageLoader.Builder(LocalPlatformContext.current)
         .components {
             add(

@@ -81,8 +81,8 @@ dependencies {
 
 <details>
   <summary>Desktop UI</summary>
-  <img src="image-url" alt=""/>
-  <img src="image-url" alt=""/>
+  <img src="https://github.com/N7ghtm4r3/Neutron-Desktop/blob/main/images/revenues.png" alt="revenues"/>
+  <img src="https://github.com/N7ghtm4r3/Neutron-Desktop/blob/main/images/ticket.png" alt="project_and_tickets"/>
 </details>
 
 ## Authors

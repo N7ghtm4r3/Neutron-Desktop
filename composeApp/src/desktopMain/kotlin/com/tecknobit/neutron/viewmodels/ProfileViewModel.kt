@@ -62,8 +62,8 @@ class ProfileViewModel(
                 )
             },
             onSuccess = {
-                profilePic.value = imagePath
                 localUser.profilePic = it.getString(PROFILE_PIC_KEY)
+                profilePic.value = localUser.profilePic
             },
             onFailure = { showSnack(it) }
         )

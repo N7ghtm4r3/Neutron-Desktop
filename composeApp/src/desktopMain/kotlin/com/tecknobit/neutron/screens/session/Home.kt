@@ -1,18 +1,31 @@
 package com.tecknobit.neutron.screens.session
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.tecknobit.neutron.screens.Screen
 import com.tecknobit.neutron.screens.navigation.Splashscreen.Companion.localUser
 import com.tecknobit.neutron.sections.addsections.AddRevenuesSection
 import com.tecknobit.neutron.ui.DisplayRevenues
 import com.tecknobit.neutron.ui.bodyFontFamily
+import com.tecknobit.neutron.ui.imageLoader
 import com.tecknobit.neutron.ui.navigator
 import com.tecknobit.neutron.viewmodels.HomeViewModel
 import com.tecknobit.neutron.viewmodels.addactivities.AddRevenuesViewModel
@@ -112,15 +125,6 @@ class Home: Screen() {
                             .weight(1f),
                         horizontalAlignment = Alignment.End
                     ) {
-                        //TODO: TO FIX
-                        Button(
-                            onClick = {
-                                navigator.navigate(PROFILE_SCREEN)
-                            }
-                        ) {
-                            Text("to remove")
-                        }
-                        /*AsyncImage(
                         AsyncImage(
                             modifier = Modifier
                                 .size(125.dp)
@@ -129,20 +133,17 @@ class Home: Screen() {
                                     shape = CircleShape
                                 )
                                 .clip(CircleShape)
-                                .clickable {  },
-                                .clip(shape = CircleShape)
                                 .clickable { navigator.navigate(PROFILE_SCREEN) },
                             imageLoader = imageLoader,
                             contentScale = ContentScale.Crop,
                             model = ImageRequest.Builder(LocalPlatformContext.current)
-                                //.data(localUser.profilePic)
                                 .data(localUser.profilePic)
                                 .crossfade(true)
                                 .crossfade(500)
                                 .build(),
-                            //TODO: USE THE REAL IMAGE ERROR .error(),
+                            error = painterResource("logo.png"),
                             contentDescription = null
-                        )*/
+                        )
                     }
                 },
                 body = {
