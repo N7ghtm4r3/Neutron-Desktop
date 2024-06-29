@@ -53,6 +53,10 @@ compose.desktop {
         mainClass = "MainKt"
         nativeDistributions {
             targetFormats(Deb, Pkg, Exe)
+            modules(
+                "java.compiler", "java.instrument", "java.management", "java.naming", "java.net.http", "java.prefs",
+                "java.rmi", "java.scripting", "java.security.jgss", "java.sql", "jdk.jfr", "jdk.unsupported"
+            )
             packageName = "Neutron"
             packageVersion = "1.0.0"
             packageName = "Neutron"
@@ -84,4 +88,8 @@ compose.desktop {
             obfuscate.set(true)
         }
     }
+}
+
+configurations.all {
+    exclude("commons-logging", "commons-logging")
 }
